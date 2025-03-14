@@ -66,7 +66,7 @@ const signup=async(req,res,next)=>{
         const {firstName,lastName,email,password,confirmPassword,otp,accountType,pincode}=req.body;
 
         //validate
-        if(!firstName || !lastName || !email || !password || !confirmPassword || !otp || !accountType || !pincode){
+        if(!firstName || !lastName || !email || !password || !confirmPassword || !otp || !accountType){
             return res.status(400).json({
                 success:false,
                 message:"Please fill all the details"
@@ -91,7 +91,7 @@ const signup=async(req,res,next)=>{
         }
 
         //verify otp
-        const recentOtp=OTP.find({email: email}).sort({createdAt: -1}).limit(1);
+        const recentOtp=await OTP.find({email: email}).sort({createdAt: -1}).limit(1);
 
         if(recentOtp.length == 0) {
             return res.status(404).json({
@@ -119,10 +119,12 @@ const signup=async(req,res,next)=>{
         })
         //create garden
         const userGarden=await Garden.create({
-            name:`${firstName} Garden`,
+            name:`${firstName}'s Garden`,
             plants:[],
             reminders:[]
         })
+
+        // console.log(userGarden);
         //create user
         const user=await User.create({
             firstName,
@@ -130,6 +132,7 @@ const signup=async(req,res,next)=>{
             email,
             password:hashedPassword,
             accountType,
+            garden:userGarden,
             additionalDetails:profileDetails._id,
             image: `https://api.dicebear.com/5.x/initials/svg?seed=${firstName} ${lastName}`
         })

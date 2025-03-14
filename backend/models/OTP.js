@@ -22,8 +22,8 @@ const otpSchema = new mongoose.Schema({
 const verification = async(email, otp) => {
     try {
         console.log("Sending Email to ", email);
-        const mailResponse = await mailSender(email, "Verification Email from Study Notion", emailTemplate(otp));
-        console.log("Email Sent Successfully!", mailResponse);
+        const mailResponse = await mailSender(email, "Verification Email from GardenGuru", emailTemplate(otp));
+        // console.log("Email Sent Successfully!", mailResponse);
     } catch (error) {
         console.error("Error occurred while sending mail: ", error.message);
     }
