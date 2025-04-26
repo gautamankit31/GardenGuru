@@ -7,6 +7,7 @@ const communityRoutes=require('./routes/Community');
 const geminiRoutes=require('./routes/Gemini');
 const {dbConnect}=require('./config/database');
 const {cloudinaryConnect}=require('./config/cloudinary');
+require('./utils/remainderScheduler');
 //gemini v dekh lena
 
 const cors=require('cors');

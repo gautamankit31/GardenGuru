@@ -206,7 +206,10 @@ const getAllCommunities = async (req, res)=>{
         //fetch data
         const communities = await Community.find();
         //send response
-        res.status(200).json({communities});
+        res.status(200).json({
+            success:true,
+            message:"All communities fetched successfully",
+            communities});
     }
     catch(error){
         res.status(500).json({message:error.message});
