@@ -47,9 +47,7 @@ function App() {
         <Route
           path="/allplants"
           element={
-            <OpenRoute>
               <AllPlants />
-            </OpenRoute>
           }
         />
          <Route
