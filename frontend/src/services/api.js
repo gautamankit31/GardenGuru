@@ -94,4 +94,5 @@ export const settingsEndpoints = {
 export const plantEndpoints = {
   GET_ALL_PLANTS: `https://perenual.com/api/v2/species-list?key=${KEY}`,
   GET_PLANT_BY_ID: `https://perenual.com/api/v2/species/details`,
+  GET_PLANT_CARE_GUIDE: `https://perenual.com/api/species-care-guide-list?key=${KEY}`
 };
