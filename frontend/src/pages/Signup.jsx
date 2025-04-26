@@ -4,12 +4,9 @@ import Template from '../components/core/Auth/Template'
 const Signup = () => {
   return (
     <div className='w-full min-h-screen md:bg-[#c4d7cf] py-16 flex justify-center items-center'>
-      <div className='bg-white md:max-w-[1280px] px-6 py-8 rounded-3xl shadow-xl'>
-        <div className="grid md:grid-cols-2 gap-6">
+      <div className='bg-white md:w-[1280px] px-6 py-8 rounded-3xl shadow-xl'>
+        <div className="grid md:grid-cols-2 ">
         <Template
-            // heading = {"Welcome Back"}
-            // subheading = {"Build skills for today, tomorrow, and beyond."}
-            // specialText = {"Education to future-proof your career."}
             image={[signup1,signup2]}
             page={"signup"}
         ></Template>
