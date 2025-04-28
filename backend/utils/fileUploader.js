@@ -16,7 +16,15 @@ const uploadFilesToCloudinary = async(file, folder, height, quality) => {
 
     options.resource_type = "auto";
 
-    return await cloudinary.uploader.upload(file.tempFilePath, options);
+    try {
+        const uploadResponse = await cloudinary.uploader.upload(file.tempFilePath, options);
+        console.log("Cloudinary upload response:", uploadResponse);
+        return uploadResponse;
+    } catch (err) {
+        console.error("Cloudinary upload error:", err);
+        throw new Error('Image upload failed');
+    }
+    
 }
 
 module.exports = { uploadFilesToCloudinary };

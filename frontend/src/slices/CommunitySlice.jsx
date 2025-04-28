@@ -23,6 +23,7 @@ const communitySlice= createSlice({
         setCommunities: (state, action) => {
             state.communities = action.payload;
             state.currentCommunity=state.communities[0];
+            
         },
         addCommunity: (state, action) => {
             state.communities.push(action.payload);

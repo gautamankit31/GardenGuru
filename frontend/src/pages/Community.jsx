@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { getAllCommunities, joinCommunity, leaveCommunity } from "../services/operations/Community";
+import { getAllCommunities, joinCommunity, leaveCommunity, getMembers, getPosts} from "../services/operations/Community";
 import { useDispatch, useSelector } from "react-redux";
 import {
   createCommunity,
   deleteCommunity,
+  addThePost,
 } from "../services/operations/Community";
 import { setCurrentCommunity } from "../slices/CommunitySlice";
 
 function Community() {
   const dispatch = useDispatch();
-  const { communities, loading, currentCommunity } = useSelector(
+  const { communities, loading, currentCommunity ,posts} = useSelector(
     (state) => state.community
   );
   const { token} = useSelector((state) => state.auth);
@@ -21,16 +22,28 @@ function Community() {
   const [communityDescription, setCommunityDescription] = useState("");
   const [filteredCommunities, setFilteredCommunities] = useState([]);
 
+  const [showAddPostForm, setShowAddPostForm] = useState(false);
+  const [postDescription, setPostDescription] = useState("");
+  const [postImage, setPostImage] = useState(null);
+
   useEffect(() => {
     dispatch(getAllCommunities(token));
-  }, [dispatch, token]);
-  console.log(currentCommunity?._id);
-  useEffect(() => {
-    if (communities && communities.length > 0 && !currentCommunity) {
-      dispatch(setCurrentCommunity(communities[0]));
-    }
-  }, [communities, currentCommunity, dispatch]);
+  }, []);
 
+  useEffect(() => {
+    if (currentCommunity && token) {
+      dispatch(getPosts(currentCommunity._id, token)); // Fetch posts for the current community
+      dispatch(getMembers(currentCommunity._id, token));
+    }
+  }, [dispatch, currentCommunity, token]);
+  // console.log(currentCommunity?._id);
+  // useEffect(() => {
+  //   if (communities && communities.length > 0 && !currentCommunity) {
+  //     dispatch(setCurrentCommunity(communities[0]));
+  //     dispatch(getPosts(communities[0]._id, token));
+  //     dispatch(getMembers(communities[0]._id, token));
+  //   }
+  // }, [communities, currentCommunity, dispatch]);
   const handleDeleteCommunity = () => {
     const confirmed = window.confirm(
       "Are you sure you want to delete this community?"
@@ -42,6 +55,8 @@ function Community() {
       );
     }
   };
+// console.log(currentCommunity?.creator)
+// console.log(user._id)
 
   const handleJoinLeave = () => {
     if ((currentCommunity.members || []).includes(user?._id)) {
@@ -77,8 +92,25 @@ function Community() {
     }
   };
 
+  const handleAddPost = async () => {
+    if (!postDescription.trim()) {
+      alert("Post description is required");
+      return;
+    }
+    try {
+      dispatch(
+        addThePost(currentCommunity._id, postDescription, postImage,token)
+      );
+      setPostDescription("");
+      setPostImage(null);
+      setShowAddPostForm(false);
+    } catch (error) {
+      console.error("Error adding post:", error);
+    }
+  };
+
   if (loading) return <p>Loading...</p>;
-  if (!communities || communities.length === 0) return <p>No data found</p>;
+  // if (!communities || communities.length === 0) return <p>No data found</p>;
 
   return (
     <div style={{ display: "flex", padding: "20px" }}>
@@ -117,6 +149,8 @@ function Community() {
             key={community._id}
             onClick={() => {
               dispatch(setCurrentCommunity(community));
+              dispatch(getPosts(community._id, token));
+              dispatch(getMembers(community._id, token));
               setShowCreateForm(false);
             }}
             style={{
@@ -158,6 +192,51 @@ function Community() {
             <h1>{currentCommunity.name}</h1>
             <p>{currentCommunity.description}</p>
 
+            {(currentCommunity.creator === user?._id ||
+              (currentCommunity.members || []).includes(user?._id)) && (
+              <button
+                style={{ marginTop: "10px", marginBottom: "10px" }}
+                onClick={() => setShowAddPostForm(true)}
+              >
+                Add Post
+              </button>
+            )}
+
+            {showAddPostForm && (
+              <div style={{ marginBottom: "20px", marginTop: "20px" }}>
+                <h3>Create a Post</h3>
+                <textarea
+                  placeholder="What's on your mind?"
+                  value={postDescription}
+                  onChange={(e) => setPostDescription(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: "8px",
+                    marginBottom: "10px",
+                    height: "80px",
+                  }}
+                ></textarea>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setPostImage(e.target.files[0])}
+                  style={{ marginBottom: "10px" }}
+                />
+                <br />
+                <button onClick={handleAddPost}>Post</button>
+                <button
+                  style={{ marginLeft: "10px" }}
+                  onClick={() => {
+                    setShowAddPostForm(false);
+                    setPostDescription("");
+                    setPostImage(null);
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            )}
+
             {currentCommunity.creator === user?._id ? (
               <button onClick={handleDeleteCommunity}>Delete Community</button>
             ) : (
@@ -169,7 +248,7 @@ function Community() {
             )}
 
             <h3 style={{ marginTop: "20px" }}>Posts:</h3>
-            {currentCommunity.posts.map((post, idx) => (
+            {posts.map((post, idx) => (
               <div
                 key={idx}
                 style={{
@@ -178,11 +257,10 @@ function Community() {
                   marginBottom: "10px",
                 }}
               >
-                <h4>{post.title}</h4>
-                <p>{post.desc}</p>
-                {post.image && (
+                <p>{post.content}</p>
+                {post.media && (
                   <img
-                    src={post.image}
+                    src={post.media}
                     alt={post.title}
                     style={{
                       width: "100%",

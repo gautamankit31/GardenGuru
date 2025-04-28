@@ -13,10 +13,10 @@ import {
   removePost,
 } from "../../slices/CommunitySlice";
 import { apiConnector } from "../apiConnector";
-import { communityEndpoints } from "../api";
+import { communityEndpoints ,postEndpoints} from "../api";
 import { useSelector } from "react-redux";
 
-export const getAllCommunities = (token) => {
+export const getAllCommunities = (token) => { 
   return async (dispatch) => {
     const toastId = toast.loading("Loading...");
     dispatch(setLoading(true));
@@ -36,6 +36,7 @@ export const getAllCommunities = (token) => {
       }
       toast.dismiss(toastId);
       dispatch(setCommunities(response.data.communities));
+      dispatch(setCurrentCommunity(response.data.communities[0]));
     } catch (error) {
       console.log("GET ALL COMMUNITIES API ERROR............", error);
       toast.error(error?.response?.data?.message || "Something went wrong");
@@ -70,7 +71,7 @@ export const getCommunity = (communityId) => {
   };
 };
 
-export const getMembers = (communityId) => {
+export const getMembers = (communityId,token) => {
   return async (dispatch) => {
     const toastId = toast.loading("Loading...");
     dispatch(setLoading(true));
@@ -78,7 +79,8 @@ export const getMembers = (communityId) => {
       const response = await apiConnector(
         "POST",
         communityEndpoints.GET_MEMBERS_API,
-        { communityId }
+        { communityId },
+        { Authorization: `Bearer ${token}` }
       );
       console.log("GET MEMBERS API RESPONSE............", response.data);
       if (!response.data.success) {
@@ -95,7 +97,7 @@ export const getMembers = (communityId) => {
   };
 };
 
-export const getPosts = (communityId) => {
+export const getPosts = (communityId,token) => {
   return async (dispatch) => {
     const toastId = toast.loading("Loading...");
     dispatch(setLoading(true));
@@ -103,7 +105,8 @@ export const getPosts = (communityId) => {
       const response = await apiConnector(
         "POST",
         communityEndpoints.GET_POSTS_API,
-        { communityId }
+        { communityId },
+        { Authorization: `Bearer ${token}` }
       );
       console.log("GET POSTS API RESPONSE............", response.data);
       if (!response.data.success) {
@@ -259,7 +262,7 @@ export const updateCommunity = (communityId, name, description) => {
   };
 };
 
-export const addThePost = (communityId, description, image) => {
+export const addThePost = (communityId, description, image,token) => {
   return async (dispatch) => {
     const toastId = toast.loading("Loading...");
     dispatch(setLoading(true));
@@ -270,15 +273,14 @@ export const addThePost = (communityId, description, image) => {
       if (image) {
         formData.append("image", image);
       }
+      else{
+        formData.append("image", null);
+      }
       const response = await apiConnector(
         "POST",
-        communityEndpoints.ADD_POST_API,
+        postEndpoints.CREATE_POST_API,
         formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
+        { Authorization: `Bearer ${token}` }
       );
       console.log("ADD POST API RESPONSE............", response.data);
       if (!response.data.success) {

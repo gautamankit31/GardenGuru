@@ -21,7 +21,7 @@ router.delete('/deleteCommunity',auth,deleteCommunity);
 router.put('/updateCommunity',auth,updateCommunity);
 router.get('/getCommunity',auth,getCommunity);
 router.get('/getAllCommunities',auth,getAllCommunities);
-router.get('/getMembers',auth,getMembers);
-router.get('/getPosts',auth,getPosts);
+router.post('/getMembers',auth,getMembers);
+router.post('/getPosts',auth,getPosts);
 
 module.exports=router;

@@ -122,7 +122,6 @@ const deleteCommunity = async (req, res)=>{
         //fetch data
         const userId=req.user.id;
         const {communityId,creatorID}=req.body;
-        
         //validate
         if(!communityId){
             return res.status(400).json({message:"Please fill all fields"});
@@ -231,6 +230,7 @@ const getMembers = async (req, res)=>{
     try{
         //fetch data
         const {communityId} = req.body;
+        // console.log(communityId);
         //validate
         if(!communityId){
             return res.status(400).json({message:"Please fill all fields"});
@@ -243,7 +243,9 @@ const getMembers = async (req, res)=>{
             return res.status(404).json({message:"Community not found"});
         }
         //send response
-        res.status(200).json({members:community.members});
+        res.status(200).json({
+            success:true,
+            members:community.members});
     }
     catch(error){
         res.status(500).json({message:error.message});
@@ -255,6 +257,7 @@ const getPosts = async (req, res)=>{
     try{
         //fetch data
         const {communityId} = req.body;
+        // console.log(communityId)
         //validate
         if(!communityId){
             return res.status(400).json({message:"Please fill all fields"});
@@ -264,10 +267,13 @@ const getPosts = async (req, res)=>{
         .findById(communityId)
         .populate("posts");
         if(!community){
-            return res.status(404).json({message:"Community not found"});
+            return res.status(404).json({
+                message:"Community not found"});
         }
         //send response
-        res.status(200).json({posts:community.posts});
+        res.status(200).json({
+            success:true,
+            posts:community.posts});
     }
     catch(error){
         res.status(500).json({message:error.message});
