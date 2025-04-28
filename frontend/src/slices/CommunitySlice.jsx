@@ -9,8 +9,8 @@ const initialState = {
     error: null,
 }
 
-const GardenSLice= createSlice({
-    name: 'garden',
+const communitySlice= createSlice({
+    name: 'community',
     initialState,
     reducers: {
         setLoading: (state, action) => {
@@ -21,6 +21,7 @@ const GardenSLice= createSlice({
         },
         setCommunities: (state, action) => {
             state.communities = action.payload;
+            state.currentCommunity=state.communities[0];
         },
         addCommunity: (state, action) => {
             state.communities.push(action.payload);
@@ -85,5 +86,5 @@ const GardenSLice= createSlice({
     },
 });
 
-export const {addCommunity,setLoading,setError, setCommunities, setCurrentCommunity, setMembers, setPosts,addMember,removeMember,removeCommunity,setLike,addComment,removeComment,addPost,removePost} = GardenSLice.actions;
-export default GardenSLice.reducer;
+export const {addCommunity,setLoading,setError, setCommunities, setCurrentCommunity, setMembers, setPosts,addMember,removeMember,removeCommunity,setLike,addComment,removeComment,addPost,removePost} = communitySlice.actions;
+export default communitySlice.reducer;

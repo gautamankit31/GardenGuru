@@ -53,9 +53,7 @@ function App() {
          <Route
           path="/plant/:id"
           element={
-            <OpenRoute>
               <PlantDetails />
-            </OpenRoute>
           }
         />
         <Route path="/forgot-password"

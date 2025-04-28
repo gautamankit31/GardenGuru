@@ -25,7 +25,10 @@ const createCommunity = async (req, res) => {
         user.createdCommunities.push(community._id);
         await user.save();
         //send response
-        res.status(201).json({message:"Community created successfully", community});
+        res.status(201).json({
+            success:true,
+            message:"Community created successfully",
+             community});
     }
     catch(error){
         res.status(500).json({message:error.message});
@@ -113,7 +116,8 @@ const deleteCommunity = async (req, res)=>{
     try{
         //fetch data
         const userId=req.user.id;
-        const {communityId}=req.body;
+        const {communityId,creatorID}=req.body;
+        
         //validate
         if(!communityId){
             return res.status(400).json({message:"Please fill all fields"});
@@ -126,7 +130,7 @@ const deleteCommunity = async (req, res)=>{
             return res.status(404).json({message:"Community not found"});
         }
         //check if user is the creator
-        if(community.creator._id != userId){
+        if(creatorID != userId){
             return res.status(401).json({message:"You are not authorized to delete this community"});
         }
         //delete community
@@ -136,9 +140,10 @@ const deleteCommunity = async (req, res)=>{
         user.createdCommunities = user.createdCommunities.filter(community => community != communityId);
         await user.save();
         //send response
-        res.status(200).json({message:"Community deleted successfully"});
-    }
-    catch(error){
+        res.status(200).json({
+            success:true,
+            message:"Community deleted successfully"});
+    } catch(error){
         res.status(500).json({message:error.message});
     }
 }
