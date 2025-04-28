@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getAllCommunities, getMembers, getPosts } from "../services/operations/Community";
+import { getAllCommunities, joinCommunity, leaveCommunity, getMembers, getPosts} from "../services/operations/Community";
 import { useDispatch, useSelector } from "react-redux";
 import {
   createCommunity,
@@ -13,7 +13,7 @@ function Community() {
   const { communities, loading, currentCommunity ,posts} = useSelector(
     (state) => state.community
   );
-  const { token } = useSelector((state) => state.auth);
+  const { token} = useSelector((state) => state.auth);
   const { user } = useSelector((state) => state.profile);
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -59,8 +59,11 @@ function Community() {
 // console.log(user._id)
 
   const handleJoinLeave = () => {
-    // TODO: Dispatch join/leave action based on if user is a member
-    alert("Join/Leave functionality to be implemented.");
+    if ((currentCommunity.members || []).includes(user?._id)) {
+      dispatch(leaveCommunity(currentCommunity._id,token,user));
+    } else {
+      dispatch(joinCommunity(currentCommunity._id,token,user));
+    }
   };
 
   const handleSearch = () => {

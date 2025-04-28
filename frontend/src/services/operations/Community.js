@@ -151,7 +151,7 @@ export const createCommunity = (name, description, token) => {
   };
 };
 
-export const joinCommunity = (communityId) => {
+export const joinCommunity = (communityId,token,user) => {
   return async (dispatch) => {
     const toastId = toast.loading("Loading...");
     dispatch(setLoading(true));
@@ -159,7 +159,8 @@ export const joinCommunity = (communityId) => {
       const response = await apiConnector(
         "POST",
         communityEndpoints.JOIN_COMMUNITY_API,
-        { communityId }
+        { communityId },
+        { Authorization: `Bearer ${token}` }
       );
       console.log("JOIN COMMUNITY API RESPONSE............", response.data);
       if (!response.data.success) {
@@ -167,8 +168,7 @@ export const joinCommunity = (communityId) => {
       }
       toast.dismiss(toastId);
       toast.success("Joined community successfully");
-      const { user } = useSelector((state) => state.profile);
-      dispatch(addMember(user));
+      dispatch(addMember(user._id));
     } catch (error) {
       console.log("JOIN COMMUNITY API ERROR............", error);
       toast.error(error?.response?.data?.message || "Something went wrong");
@@ -178,15 +178,16 @@ export const joinCommunity = (communityId) => {
   };
 };
 
-export const leaveCommunity = (communityId) => {
+export const leaveCommunity = (communityId,token,user) => {
   return async (dispatch) => {
     const toastId = toast.loading("Loading...");
     dispatch(setLoading(true));
     try {
       const response = await apiConnector(
-        "POST",
+        "DELETE",
         communityEndpoints.LEAVE_COMMUNITY_API,
-        { communityId }
+        { communityId },
+        { Authorization: `Bearer ${token}` }
       );
       console.log("LEAVE COMMUNITY API RESPONSE............", response.data);
       if (!response.data.success) {
@@ -194,7 +195,7 @@ export const leaveCommunity = (communityId) => {
       }
       toast.dismiss(toastId);
       toast.success("Left community successfully");
-      dispatch(removeMember(communityId));
+      dispatch(removeMember(user._id));
     } catch (error) {
       console.log("LEAVE COMMUNITY API ERROR............", error);
       toast.error(error?.response?.data?.message || "Something went wrong");

@@ -66,7 +66,9 @@ const joinCommunity = async (req, res) => {
         user.joinedCommunities.push(communityId);
         await user.save();
         //send response
-        res.status(200).json({message:"User joined community successfully", community});
+        res.status(200).json({
+            success:true,
+            message:"User joined community successfully", community});
     }
     catch(error){
         res.status(500).json({message:error.message});
@@ -104,7 +106,10 @@ const leaveCommunity = async (req, res) => {
         user.joinedCommunities = user.joinedCommunities.filter(community => community != communityId);
         await user.save();
         //send response
-        res.status(200).json({message:"User left community successfully", community});
+        res.status(200).json({
+            success:true,
+            message:"User left community successfully"
+            , community});
     }
     catch(error){
         res.status(500).json({message:error.message});
