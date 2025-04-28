@@ -4,8 +4,7 @@ require('dotenv').config();
 
 const auth=async(req,res,next)=>{
     try{
-        const token=req.body.token || req.cookies.token || (req.header('Authorization')?.replace('Bearer ', '') || null);;
-
+        const token = req.header('Authorization')?.replace('Bearer ', '') || req.cookies.token || req.body.token || null;
         if(!token) {
             return res.status(401).json({
                 success: false,
@@ -16,7 +15,6 @@ const auth=async(req,res,next)=>{
         try{
             const decode=jwt.verify(token,process.env.JWT_SECRET);
             req.user=decode;
-
         }
         catch(error){
             return res.status(401).json({
