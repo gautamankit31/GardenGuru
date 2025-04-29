@@ -156,213 +156,252 @@ function Community() {
   // if (!communities || communities.length === 0) return <p>No data found</p>;
 
   return (
-    <div style={{ display: "flex", padding: "20px" }}>
+    <div className="flex p-5">
       {/* LEFT SIDE */}
-      <div
-        style={{
-          flex: "1",
-          paddingRight: "20px",
-          borderRight: "1px solid #ccc",
-        }}
-      >
+      <div className="w-full sm:max-w-sm sm:flex-1 sm:pr-5 border-gray-300 bg-white p-4 rounded-md shadow-sm sm:border-r border-none">
+        {/* Create Community Button */}
         <button
-          style={{ marginBottom: "10px" }}
+          className="w-full mb-4 px-4 py-2 bg-[#20b486] text-white rounded-md font-semibold hover:bg-[#1e9b76] transition"
           onClick={() => setShowCreateForm(true)}
         >
-          Create Community
+          + Create Community
         </button>
 
-        <div style={{ marginBottom: "10px" }}>
+        {/* Search Section */}
+        <div className="mb-4 flex flex-col sm:flex-row gap-2">
           <input
             type="text"
             placeholder="Search Community..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ marginRight: "5px" }}
+            className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#20b486] flex-1"
           />
-          <button onClick={handleSearch}>Search</button>
+          <button
+            className="px-4 py-2 bg-[#20b486] text-white rounded-md hover:bg-[#87dfa7] transition"
+            onClick={handleSearch}
+          >
+            Search
+          </button>
         </div>
 
-        <h3>My Communities:</h3>
-        {communities
-          .filter((community) => community.creator?.includes(user?._id))
-          .map((community) => (
-            <div
-              key={community._id}
-              onClick={() => {
-                dispatch(setCurrentCommunity(community));
-                dispatch(getPosts(community._id, token));
-                dispatch(getMembers(community._id, token));
-                setShowCreateForm(false);
-              }}
-              style={{
-                marginBottom: "10px",
-                cursor: "pointer",
-                fontWeight:
-                  currentCommunity?._id === community._id ? "bold" : "normal",
-              }}
-            >
-              {community.name}
-            </div>
-          ))}
-
-        <h3>All Communities:</h3>
-        {(filteredCommunities.length > 0
-          ? filteredCommunities
-          : communities
-        ).map((community) => (
-          <div
-            key={community._id}
-            onClick={() => {
-              dispatch(setCurrentCommunity(community));
-              dispatch(getPosts(community._id, token));
-              dispatch(getMembers(community._id, token));
-              setShowCreateForm(false);
-            }}
-            style={{
-              marginBottom: "10px",
-              cursor: "pointer",
-              fontWeight:
-                currentCommunity?._id === community._id ? "bold" : "normal",
-            }}
-          >
-            {community.name}
+        {/* My Communities Section */}
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold mb-2 border-b pb-1">
+            My Communities
+          </h3>
+          <div className="space-y-2">
+            {communities
+              .filter((community) => community.creator?.includes(user?._id))
+              .map((community) => (
+                <div
+                  key={community._id}
+                  onClick={() => {
+                    dispatch(setCurrentCommunity(community));
+                    dispatch(getPosts(community._id, token));
+                    dispatch(getMembers(community._id, token));
+                    setShowCreateForm(false);
+                  }}
+                  className={`px-3 py-2 rounded-md cursor-pointer hover:bg-gray-100 transition ${
+                    currentCommunity?._id === community._id
+                      ? "bg-[#e0f7f3] font-semibold"
+                      : ""
+                  }`}
+                >
+                  {community.name}
+                </div>
+              ))}
           </div>
-        ))}
+        </div>
+
+        {/* All Communities Section */}
+        <div>
+          <h3 className="text-lg font-semibold mb-2 border-b pb-1">
+            All Communities
+          </h3>
+          <div className="space-y-2">
+            {(filteredCommunities.length > 0
+              ? filteredCommunities
+              : communities
+            ).map((community) => (
+              <div
+                key={community._id}
+                onClick={() => {
+                  dispatch(setCurrentCommunity(community));
+                  dispatch(getPosts(community._id, token));
+                  dispatch(getMembers(community._id, token));
+                  setShowCreateForm(false);
+                }}
+                className={`px-3 py-2 rounded-md cursor-pointer hover:bg-gray-100 transition ${
+                  currentCommunity?._id === community._id
+                    ? "bg-[#e0f7f3] font-semibold"
+                    : ""
+                }`}
+              >
+                {community.name}
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* RIGHT SIDE */}
-      <div style={{ flex: "2", paddingLeft: "20px" }}>
+      <div className="flex-1 pl-5 w-full max-w-4xl mx-auto">
         {showCreateForm ? (
           <>
-            <h1>Create a New Community</h1>
-            <div style={{ marginBottom: "10px" }}>
+            <h1 className="text-2xl font-bold mb-4">Create a New Community</h1>
+            <div className="space-y-3 mb-6">
               <input
                 type="text"
                 placeholder="Community Name"
                 value={communityName}
                 onChange={(e) => setCommunityName(e.target.value)}
-                style={{ width: "100%", padding: "8px", marginBottom: "10px" }}
+                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#20b486]"
               />
               <textarea
                 placeholder="Community Description"
                 value={communityDescription}
                 onChange={(e) => setCommunityDescription(e.target.value)}
-                style={{ width: "100%", padding: "8px", height: "100px" }}
+                className="w-full p-3 h-28 border border-gray-300 rounded-md resize-none focus:ring-2 focus:ring-[#20b486]"
               ></textarea>
+              <button
+                className="px-5 py-2 bg-[#20b486] text-white rounded-md hover:bg-[#1e9b76] transition"
+                onClick={handleCreateCommunity}
+              >
+                Create Community
+              </button>
             </div>
-            <button onClick={handleCreateCommunity}>Create</button>
           </>
         ) : currentCommunity ? (
-          <>
-            <h1>{currentCommunity.name}</h1>
-            <p>{currentCommunity.description}</p>
+          <div className="space-y-4">
+            <div className="text-center">
+              <h1 className="text-3xl font-bold">{currentCommunity.name}</h1>
+              <p className="text-lg text-gray-600">
+                {currentCommunity.description}
+              </p>
+              <p className="text-sm text-gray-500 mt-1">
+                Members: {currentCommunity.members?.length || 0}
+              </p>
+            </div>
 
             {(currentCommunity.creator === user?._id ||
-              (currentCommunity.members || []).includes(user?._id)) && (
-              <button
-                style={{ marginTop: "10px", marginBottom: "10px" }}
-                onClick={() => setShowAddPostForm(true)}
-              >
-                Add Post
-              </button>
+              currentCommunity.members?.includes(user?._id)) && (
+              <div className="flex flex-wrap gap-3 justify-center">
+                <button
+                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                  onClick={() => setShowAddPostForm(true)}
+                >
+                  Add Post
+                </button>
+              </div>
             )}
 
             {showAddPostForm && (
-              <div style={{ marginBottom: "20px", marginTop: "20px" }}>
-                <h3>Create a Post</h3>
+              <div className="border p-4 rounded-md shadow-sm bg-white">
+                <h3 className="text-lg font-semibold mb-2">Create a Post</h3>
                 <textarea
                   placeholder="What's on your mind?"
                   value={postDescription}
                   onChange={(e) => setPostDescription(e.target.value)}
-                  style={{
-                    width: "100%",
-                    padding: "8px",
-                    marginBottom: "10px",
-                    height: "80px",
-                  }}
+                  className="w-full p-3 h-24 border border-gray-300 rounded resize-none"
                 ></textarea>
                 <input
                   type="file"
                   accept="image/*"
                   onChange={(e) => setPostImage(e.target.files[0])}
-                  style={{ marginBottom: "10px" }}
+                  className="my-2"
                 />
-                <br />
-                <button onClick={handleAddPost}>Post</button>
-                <button
-                  style={{ marginLeft: "10px" }}
-                  onClick={() => {
-                    setShowAddPostForm(false);
-                    setPostDescription("");
-                    setPostImage(null);
-                  }}
-                >
-                  Cancel
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+                    onClick={handleAddPost}
+                  >
+                    Post
+                  </button>
+                  <button
+                    className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+                    onClick={() => {
+                      setShowAddPostForm(false);
+                      setPostDescription("");
+                      setPostImage(null);
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
             )}
 
-            {currentCommunity.creator === user?._id ? (
-              <button onClick={handleDeleteCommunity}>Delete Community</button>
-            ) : (
-              <button onClick={handleJoinLeave}>
-                {(currentCommunity.members || []).includes(user?._id)
-                  ? "Leave Community"
-                  : "Join Community"}
-              </button>
-            )}
+            <div className="flex gap-3 flex-wrap">
+              {currentCommunity.creator === user?._id ? (
+                <button
+                  className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                  onClick={handleDeleteCommunity}
+                >
+                  Delete Community
+                </button>
+              ) : (
+                <button
+                  className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600"
+                  onClick={handleJoinLeave}
+                >
+                  {(currentCommunity.members || []).includes(user?._id)
+                    ? "Leave Community"
+                    : "Join Community"}
+                </button>
+              )}
+            </div>
 
-            {currentCommunity && currentCommunity.members && (
-              <p>Members: {currentCommunity.members.length}</p>
-            )}
+            <div className="space-y-6">
+              <h3 className="text-xl font-semibold">Posts:</h3>
+              {posts.map((post, idx) => (
+                <div
+                  key={idx}
+                  className="border p-4 rounded-md shadow-sm bg-white space-y-2"
+                >
+                  <p className="text-lg font-medium">{post.content}</p>
+                  {post.media && (
+                    <img
+                      src={post.media}
+                      alt="Post"
+                      className="w-full object-cover rounded"
+                    />
+                  )}
+                  <div className="flex flex-wrap gap-3">
+                    <button
+                      className="px-3 py-1 bg-blue-400 text-white rounded hover:bg-blue-500"
+                      onClick={() => handleLike(post._id)}
+                    >
+                      {post.likes?.some((like) => like.userId === user._id)
+                        ? "Unlike"
+                        : "Like"}{" "}
+                      ({post.likes?.length || 0})
+                    </button>
 
-            <h3 style={{ marginTop: "20px" }}>Posts:</h3>
-            {posts.map((post, idx) => (
-              <div
-                key={idx}
-                style={{
-                  border: "1px solid gray",
-                  padding: "10px",
-                  marginBottom: "10px",
-                }}
-              >
-                <p>{post.content}</p>
-                {post.media && (
-                  <img
-                    src={post.media}
-                    alt={post.title}
-                    style={{
-                      width: "100%",
-                      maxHeight: "200px",
-                      objectFit: "cover",
-                    }}
-                  />
-                )}
-                <div style={{ marginTop: "10px" }}>
-                  <button onClick={() => handleLike(post._id)}>
-                    {post.likes?.some((like) => like.userId === user._id)
-                      ? "Unlike"
-                      : "Like"}{" "}
-                    ({post.likes?.length || 0})
-                  </button>
+                    <button
+                      className="px-3 py-1 bg-yellow-400 text-white rounded hover:bg-yellow-500"
+                      onClick={() =>
+                        setShowCommentBox((prev) => ({
+                          ...prev,
+                          [post._id]: !prev[post._id],
+                        }))
+                      }
+                    >
+                      Comment
+                    </button>
 
-                  {/* Add Comment Button */}
-                  <button
-                    style={{ marginLeft: "10px" }}
-                    onClick={() =>
-                      setShowCommentBox((prev) => ({
-                        ...prev,
-                        [post._id]: !prev[post._id],
-                      }))
-                    }
-                  >
-                    Comment
-                  </button>
+                    {(currentCommunity.creator === user?._id ||
+                      post.author === user?._id) && (
+                      <button
+                        className="px-3 py-1 text-red-600 hover:underline"
+                        onClick={() => dispatch(deletePost(post._id, token))}
+                      >
+                        Delete Post
+                      </button>
+                    )}
+                  </div>
 
-                  {/* Comment Input Box */}
                   {showCommentBox[post._id] && (
-                    <div style={{ marginTop: "10px" }}>
+                    <div className="mt-2 space-y-2">
                       <input
                         type="text"
                         value={commentText[post._id] || ""}
@@ -373,53 +412,51 @@ function Community() {
                           })
                         }
                         placeholder="Write a comment..."
-                        style={{ width: "80%", padding: "5px" }}
+                        className="w-full p-2 border border-gray-300 rounded"
                       />
                       <button
-                        style={{ marginLeft: "5px" }}
+                        className="px-3 py-1 bg-green-400 text-white rounded hover:bg-green-500"
                         onClick={() => handleAddComment(post._id)}
                       >
-                        Post
+                        Post Comment
                       </button>
-                    </div>
-                  )}
-
-                  {/* Optional: Display Existing Comments */}
-                  {post.comments && post.comments.length > 0 && (
-                    <div style={{ marginTop: "10px" }}>
-                      <h4>Comments:</h4>
-                      {post.comments.map((comment, index) => (
-                        <div key={index} style={{ marginBottom: "5px" }}>
-                          {comment.content}
-                          <button
-                            onClick={() =>
-                              dispatch(
-                                removeTheComment(post._id, comment._id, token)
-                              )
-                            }
-                          >
-                            Delete Comment
-                          </button>
+                      {post.comments?.length > 0 && (
+                        <div>
+                          <h4 className="font-medium">Comments:</h4>
+                          {post.comments.map((comment, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center justify-between text-sm"
+                            >
+                              <span>{comment.content}</span>
+                              <button
+                                className="text-red-500 hover:underline"
+                                onClick={() =>
+                                  dispatch(
+                                    removeTheComment(
+                                      post._id,
+                                      comment._id,
+                                      token
+                                    )
+                                  )
+                                }
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          ))}
                         </div>
-                      ))}
+                      )}
                     </div>
-                  )}
-
-                  {(currentCommunity.creator === user?._id ||
-                    post.author === user?._id) && (
-                    <button
-                      style={{ marginLeft: "10px", color: "red" }}
-                      onClick={() => dispatch(deletePost(post._id, token))}
-                    >
-                      Delete Post
-                    </button>
                   )}
                 </div>
-              </div>
-            ))}
-          </>
+              ))}
+            </div>
+          </div>
         ) : (
-          <p>Select a community</p>
+          <p className="text-center text-gray-500 text-lg mt-10">
+            Select a community to view posts
+          </p>
         )}
       </div>
     </div>
