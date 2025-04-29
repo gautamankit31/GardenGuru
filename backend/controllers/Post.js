@@ -74,7 +74,9 @@ const deletePost = async (req, res) => {
         //delete post
         await Post.findByIdAndDelete(postId);
         //send response
-        res.status(200).json({ message: "Post deleted successfully" });
+        res.status(200).json({
+            success: true,
+            message: "Post deleted successfully" });
     }
     catch (error) {
         res.status(500).json({ message: error.message });
@@ -102,11 +104,47 @@ const likePost = async (req, res) => {
         post.likes.push(userId);
         await post.save();
         //send response
-        res.status(200).json({ message: "Post liked successfully", post });
+        res.status(200).json({
+            success:true,
+            message: "Post liked successfully",
+            post
+        });
     }
     catch (error) {
         res.status(500).json({ message: error.message });
     }
 }
 
-module.exports = { createPost, deletePost, likePost };
+//unlike post
+const unlikePost = async (req, res) => {
+    try {
+        //fetch data
+        const userId  = req.user.id;
+        const { postId } = req.body;
+        //validate
+        if (!postId) {
+            return res.status(400).json({ message: "Please fill all fields" });
+        }
+        //get post
+        const post = await Post.findById(postId);
+        //check if user already liked the post
+        const isLiked = post.likes.some(like => like == userId);
+        if (!isLiked) {
+            return res.status(400).json({ message: "You already unliked this post" });
+        }
+        //unlike post
+        post.likes = post.likes.filter(like => like != userId);
+        await post.save();
+        //send response
+        res.status(200).json({
+            success:true,
+            message: "Post unliked successfully",
+            post
+        });
+    }
+    catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
+module.exports = { createPost, deletePost, likePost,unlikePost };

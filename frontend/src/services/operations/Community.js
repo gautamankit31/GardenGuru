@@ -297,15 +297,16 @@ export const addThePost = (communityId, description, image,token) => {
     toast.dismiss(toastId);
   };
 };
-export const deletePost = (postId) => {
+export const deletePost = (postId, token) => {
   return async (dispatch) => {
     const toastId = toast.loading("Loading...");
     dispatch(setLoading(true));
     try {
       const response = await apiConnector(
-        "POST",
-        communityEndpoints.DELETE_POST_API,
-        { postId }
+        "DELETE",
+        postEndpoints.DELETE_POST_API,
+        { postId },
+        { Authorization: `Bearer ${token}` }
       );
       console.log("DELETE POST API RESPONSE............", response.data);
       if (!response.data.success) {

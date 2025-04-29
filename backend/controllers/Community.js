@@ -263,9 +263,14 @@ const getPosts = async (req, res)=>{
             return res.status(400).json({message:"Please fill all fields"});
         }
         //check if community exists
-        const community = await Community
-        .findById(communityId)
-        .populate("posts");
+        const community = await Community.findById(communityId)
+        .populate({
+          path: "posts",
+          populate: {
+            path: "comments",
+          },
+        });
+      
         if(!community){
             return res.status(404).json({
                 message:"Community not found"});

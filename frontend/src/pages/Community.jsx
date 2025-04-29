@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { getAllCommunities, joinCommunity, leaveCommunity, getMembers, getPosts} from "../services/operations/Community";
+import {
+  getAllCommunities,
+  joinCommunity,
+  leaveCommunity,
+  getMembers,
+  getPosts,
+  deletePost,
+} from "../services/operations/Community";
 import { useDispatch, useSelector } from "react-redux";
 import {
   createCommunity,
@@ -7,13 +14,19 @@ import {
   addThePost,
 } from "../services/operations/Community";
 import { setCurrentCommunity } from "../slices/CommunitySlice";
+import {
+  addLike,
+  addTheComment,
+  removeLike,
+  removeTheComment,
+} from "../services/operations/Post";
 
 function Community() {
   const dispatch = useDispatch();
-  const { communities, loading, currentCommunity ,posts} = useSelector(
+  const { communities, loading, currentCommunity, posts } = useSelector(
     (state) => state.community
   );
-  const { token} = useSelector((state) => state.auth);
+  const { token } = useSelector((state) => state.auth);
   const { user } = useSelector((state) => state.profile);
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -28,14 +41,14 @@ function Community() {
 
   useEffect(() => {
     dispatch(getAllCommunities(token));
-  }, []);
+  }, [token]);
 
   useEffect(() => {
     if (currentCommunity && token) {
       dispatch(getPosts(currentCommunity._id, token)); // Fetch posts for the current community
       dispatch(getMembers(currentCommunity._id, token));
     }
-  }, [dispatch, currentCommunity, token]);
+  }, [currentCommunity]);
   // console.log(currentCommunity?._id);
   // useEffect(() => {
   //   if (communities && communities.length > 0 && !currentCommunity) {
@@ -55,14 +68,17 @@ function Community() {
       );
     }
   };
-// console.log(currentCommunity?.creator)
-// console.log(user._id)
+  // console.log(currentCommunity?.creator)
+  // console.log(user._id);
+  // console.log(communities);
+  // console.log(currentCommunity.members);
+  console.log(currentCommunity);
 
   const handleJoinLeave = () => {
     if ((currentCommunity.members || []).includes(user?._id)) {
-      dispatch(leaveCommunity(currentCommunity._id,token,user));
+      dispatch(leaveCommunity(currentCommunity._id, token, user));
     } else {
-      dispatch(joinCommunity(currentCommunity._id,token,user));
+      dispatch(joinCommunity(currentCommunity._id, token, user));
     }
   };
 
@@ -99,13 +115,40 @@ function Community() {
     }
     try {
       dispatch(
-        addThePost(currentCommunity._id, postDescription, postImage,token)
+        addThePost(currentCommunity._id, postDescription, postImage, token)
       );
       setPostDescription("");
       setPostImage(null);
       setShowAddPostForm(false);
     } catch (error) {
       console.error("Error adding post:", error);
+    }
+  };
+
+  const handleLike = (postId) => {
+    const post = posts.find((post) => post._id === postId);
+    if (post.likes?.some((like) => like === user._id)) {
+      console.log("remove call");
+      dispatch(removeLike(postId, token, user));
+    } else {
+      console.log("add like");
+      dispatch(addLike(postId, token, user));
+    }
+  };
+
+  const [showCommentBox, setShowCommentBox] = useState({});
+  const [commentText, setCommentText] = useState({});
+
+  const handleAddComment = async (postId) => {
+    if (!commentText[postId]?.trim()) {
+      alert("Comment cannot be empty");
+      return;
+    }
+    try {
+      dispatch(addTheComment(postId, commentText[postId], token));
+      setCommentText((prev) => ({ ...prev, [postId]: "" })); // Clear after posting
+    } catch (error) {
+      console.error("Error adding comment:", error);
     }
   };
 
@@ -139,6 +182,29 @@ function Community() {
           />
           <button onClick={handleSearch}>Search</button>
         </div>
+
+        <h3>My Communities:</h3>
+        {communities
+          .filter((community) => community.creator?.includes(user?._id))
+          .map((community) => (
+            <div
+              key={community._id}
+              onClick={() => {
+                dispatch(setCurrentCommunity(community));
+                dispatch(getPosts(community._id, token));
+                dispatch(getMembers(community._id, token));
+                setShowCreateForm(false);
+              }}
+              style={{
+                marginBottom: "10px",
+                cursor: "pointer",
+                fontWeight:
+                  currentCommunity?._id === community._id ? "bold" : "normal",
+              }}
+            >
+              {community.name}
+            </div>
+          ))}
 
         <h3>All Communities:</h3>
         {(filteredCommunities.length > 0
@@ -247,6 +313,10 @@ function Community() {
               </button>
             )}
 
+            {currentCommunity && currentCommunity.members && (
+              <p>Members: {currentCommunity.members.length}</p>
+            )}
+
             <h3 style={{ marginTop: "20px" }}>Posts:</h3>
             {posts.map((post, idx) => (
               <div
@@ -270,8 +340,80 @@ function Community() {
                   />
                 )}
                 <div style={{ marginTop: "10px" }}>
-                  <button>Like</button>
-                  <button style={{ marginLeft: "10px" }}>Comments</button>
+                  <button onClick={() => handleLike(post._id)}>
+                    {post.likes?.some((like) => like.userId === user._id)
+                      ? "Unlike"
+                      : "Like"}{" "}
+                    ({post.likes?.length || 0})
+                  </button>
+
+                  {/* Add Comment Button */}
+                  <button
+                    style={{ marginLeft: "10px" }}
+                    onClick={() =>
+                      setShowCommentBox((prev) => ({
+                        ...prev,
+                        [post._id]: !prev[post._id],
+                      }))
+                    }
+                  >
+                    Comment
+                  </button>
+
+                  {/* Comment Input Box */}
+                  {showCommentBox[post._id] && (
+                    <div style={{ marginTop: "10px" }}>
+                      <input
+                        type="text"
+                        value={commentText[post._id] || ""}
+                        onChange={(e) =>
+                          setCommentText({
+                            ...commentText,
+                            [post._id]: e.target.value,
+                          })
+                        }
+                        placeholder="Write a comment..."
+                        style={{ width: "80%", padding: "5px" }}
+                      />
+                      <button
+                        style={{ marginLeft: "5px" }}
+                        onClick={() => handleAddComment(post._id)}
+                      >
+                        Post
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Optional: Display Existing Comments */}
+                  {post.comments && post.comments.length > 0 && (
+                    <div style={{ marginTop: "10px" }}>
+                      <h4>Comments:</h4>
+                      {post.comments.map((comment, index) => (
+                        <div key={index} style={{ marginBottom: "5px" }}>
+                          {comment.content}
+                          <button
+                            onClick={() =>
+                              dispatch(
+                                removeTheComment(post._id, comment._id, token)
+                              )
+                            }
+                          >
+                            Delete Comment
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {(currentCommunity.creator === user?._id ||
+                    post.author === user?._id) && (
+                    <button
+                      style={{ marginLeft: "10px", color: "red" }}
+                      onClick={() => dispatch(deletePost(post._id, token))}
+                    >
+                      Delete Post
+                    </button>
+                  )}
                 </div>
               </div>
             ))}

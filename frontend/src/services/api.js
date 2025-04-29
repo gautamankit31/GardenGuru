@@ -25,6 +25,8 @@ export const postEndpoints = {
     DELETE_POST_API: BASE_URL + "/post/deletePost",
     //like post
     LIKE_POST_API: BASE_URL + "/post/likePost",
+    //unlike post
+    UNLIKE_POST_API: BASE_URL + "/post/unlikePost",
     //add comment
     ADD_COMMENT_API: BASE_URL + "/post/addComment",
     //delete comment

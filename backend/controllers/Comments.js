@@ -4,13 +4,13 @@ const Post = require('../models/Post');
 //add comment 
 exports.addComment = async (req, res) => {
     try {
-        const { postId, content } = req.body;
+        const { postId, comment } = req.body;
         const userId = req.user.id;
 
         const newComment = new Comment({
             post: postId,
             author: userId,
-            content: content,
+            content: comment,
         });
 
         const savedComment = await newComment.save();
@@ -19,7 +19,10 @@ exports.addComment = async (req, res) => {
             $push: { comments: savedComment._id },
         });
 
-        res.status(201).json(savedComment);
+        res.status(201).json({
+            success: true,
+            message: "Comment added successfully",
+            comment: savedComment,});
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -47,7 +50,9 @@ exports.deleteComment = async (req, res) => {
             $pull: { comments: commentId },
         });
 
-        res.status(200).json({ message: "Comment deleted" });
+        res.status(200).json({
+            success:true,
+             message: "Comment deleted" });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
