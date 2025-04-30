@@ -42,6 +42,9 @@ function Navbar() {
                 <NavLink to="/dashboard" className="hover:text-[#20B486]">
                   Dashboard
                 </NavLink>
+                <NavLink to="/gemini" className="hover:text-[#20B486]">
+                  Ask AI
+                </NavLink>
               </>
             )}
           </div>
@@ -122,6 +125,11 @@ function Navbar() {
                   >
                     Dashboard
                   </NavLink>
+                  <NavLink to="/gemini"
+                  onClick={handleToggle}
+                  className="hover:text-[#20B486]">
+                  Ask AI
+                </NavLink>
                 </>
               )}
               <div className="mt-6 flex flex-col gap-3">

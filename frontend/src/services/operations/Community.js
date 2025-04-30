@@ -168,7 +168,7 @@ export const joinCommunity = (communityId,token,user) => {
       }
       toast.dismiss(toastId);
       toast.success("Joined community successfully");
-      dispatch(addMember(user._id));
+      dispatch(addMember(user));
     } catch (error) {
       console.log("JOIN COMMUNITY API ERROR............", error);
       toast.error(error?.response?.data?.message || "Something went wrong");

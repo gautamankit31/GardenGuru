@@ -1,5 +1,7 @@
 // const { generateResponse } = require("../config/gemini");
-// const { uploadFilesToCloudinary } = require("../utils/fileUploader");
+const { uploadFilesToCloudinary } = require("../utils/fileUploader");
+
+const { generateResponse } = require("../config/gemini");
 
 // const talkToGemini = async (req, res) => {
 //     try {
@@ -43,7 +45,9 @@
 // module.exports = talkToGemini;
 const talkToGemini = async (req, res) => {
     try {
-        const prompt = "hello how are you";
+       // console.log(req.body.message)
+        const pr = req.body.message;
+        const prompt=`The user will be providing a prompt and an maybe an image you have to help him with either learning about the plant care or help him learn to take care of the plant.if he ask for anything else other then plants reply with can't help with that. The prompt is ${pr}`;
         let imageUrl = null;
 
         // Check if image is provided
@@ -63,7 +67,7 @@ const talkToGemini = async (req, res) => {
         }
 
         // Generate Gemini response (image or text only)
-        const resp = await generateResponse(imageUrl);
+        const resp = await generateResponse(imageUrl, prompt);
 
         if (!resp) {
             return res.status(500).json({
@@ -71,7 +75,6 @@ const talkToGemini = async (req, res) => {
                 success: false
             });
         }
-
         return res.status(200).json({
             message: "Got the response",
             success: true,
@@ -86,5 +89,6 @@ const talkToGemini = async (req, res) => {
         });
     }
 };
+
 
 module.exports = talkToGemini;

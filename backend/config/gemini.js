@@ -44,6 +44,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_KEY);
 const axios = require('axios');
 
 async function fileToGenerativePart(imageUrl, mimeType) {
+  //  console.log(imageUrl,mimeType)
     try {
         const response = await axios.get(imageUrl, { responseType: 'arraybuffer' });
         const base64Image = Buffer.from(response.data).toString("base64");
@@ -60,9 +61,9 @@ async function fileToGenerativePart(imageUrl, mimeType) {
     }
 }
 
-const generateResponse = async (imageUrl = null) => {
+const generateResponse = async (imageUrl,promp) => {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
-    const prompt = "This plant has some disease, share what is this and how can we cure it";
+    const prompt = promp;
 
     try {
         let response;
@@ -71,9 +72,11 @@ const generateResponse = async (imageUrl = null) => {
             const imageParts = [
                 await fileToGenerativePart(imageUrl, "image/jpeg"),
             ];
+            console.log(imageParts)
             response = await model.generateContent([prompt, ...imageParts]);
         } else {
             response = await model.generateContent(prompt);
+          //  console.log(response.response.text())
         }
 
         return response.response.text();

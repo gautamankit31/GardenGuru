@@ -23,7 +23,7 @@ import {
 
 function Community() {
   const dispatch = useDispatch();
-  const { communities, loading, currentCommunity, posts } = useSelector(
+  const { communities, loading, currentCommunity, posts, members } = useSelector(
     (state) => state.community
   );
   const { token } = useSelector((state) => state.auth);
@@ -74,7 +74,7 @@ function Community() {
   // console.log(communities);
   // console.log(currentCommunity.members);
   const handleJoinLeave = () => {
-    if ((currentCommunity.members || []).includes(user?._id)) {
+    if ((members || []).some(member => member._id === user?._id)) {
       dispatch(leaveCommunity(currentCommunity._id, token, user));
     } else {
       dispatch(joinCommunity(currentCommunity._id, token, user));
@@ -278,7 +278,7 @@ function Community() {
                 {currentCommunity.description}
               </p>
               <p className="text-sm text-gray-500 mt-1">
-                Members: {currentCommunity.members?.length || 0}
+                Members: {members?.length || 0}
               </p>
             </div>
 
@@ -343,7 +343,7 @@ function Community() {
                   className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600"
                   onClick={handleJoinLeave}
                 >
-                  {(currentCommunity.members || []).includes(user?._id)
+                  {(members || []).some((member) => member._id === user?._id)
                     ? "Leave Community"
                     : "Join Community"}
                 </button>

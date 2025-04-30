@@ -41,6 +41,7 @@ const communitySlice = createSlice({
     },
     addMember: (state, action) => {
       state.members.push(action.payload);
+      console.log(state.members, action.payload);
     },
     removeMember: (state, action) => {
       const memberId = action.payload;
