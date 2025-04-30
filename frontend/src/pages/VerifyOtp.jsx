@@ -33,14 +33,14 @@ const VerifyOtp = () => {
                       onChange={setOtp}
                       numInputs={6}
                       // renderSeparator={<span className=' text-richblack-600'>-</span>}
-                      inputStyle="rounded border-[1px] border-richblack-500 text-5xl text-center bg-richblack-700 text-white"
+                      inputStyle="rounded border-[1px] border-gray-500 text-5xl text-center"
                       focusStyle="border-[5px]"
                       isInputNum={true}
                       shouldAutoFocus={true}
                       containerStyle="flex justify-between"
                       renderInput={(props) => <input {...props} />}
                   />
-                  <button type="submit" className="w-full bg-yellow-50 py-[12px] px-[12px] rounded-[8px] mt-6 text-richblack-900 font-semibold">Verify Email</button>
+                  <button type="submit" className="w-full bg-[#20B486] py-[12px] px-[12px] rounded-[8px] mt-6 text-white font-semibold">Verify Email</button>
                 </form>
               </div>
             </div>

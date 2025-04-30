@@ -21,7 +21,7 @@ export const addLike = (postId,token,user) => {
                 throw new Error(response.data.message);
             }
             toast.dismiss(toastId);
-            dispatch(setLike(postId,user._id));
+            dispatch(setLike({postId,userId:user._id}));
         } catch (error) {
             console.log("SET LIKE API ERROR............", error);
             toast.error(error?.response?.data?.message || "Something went wrong");
@@ -44,7 +44,7 @@ export const removeLike = (postId,token,user) => {
                 throw new Error(response.data.message);
             }
             toast.dismiss(toastId);
-            dispatch(setLike(postId,user._id));
+            dispatch(setLike({postId,userId:user._id}));
         } catch (error) {
             console.log("REMOVE LIKE API ERROR............", error);
             toast.error(error?.response?.data?.message || "Something went wrong");
@@ -67,7 +67,7 @@ export const addTheComment = (postId, comment,token) => {
                 throw new Error(response.data.message);
             }
             toast.dismiss(toastId);
-            dispatch(setComment(postId,response.data.comment));
+            dispatch(setComment({postId,comment:response.data.comment}));
         } catch (error) {
             console.log("ADD COMMENT API ERROR............", error);
             toast.error(error?.response?.data?.message || "Something went wrong");
@@ -90,7 +90,7 @@ export const removeTheComment = (postId, commentId,token) => {
                 throw new Error(response.data.message);
             }
             toast.dismiss(toastId);
-            dispatch(deleteComment(postId,commentId));
+            dispatch(deleteComment({postId,commentId}));
         } catch (error) {
             console.log("REMOVE COMMENT API ERROR............", error);
             toast.error(error?.response?.data?.message || "Something went wrong");

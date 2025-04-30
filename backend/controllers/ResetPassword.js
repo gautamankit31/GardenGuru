@@ -3,6 +3,7 @@ const User = require("../models/User");
 const { mailSender } = require('../utils/mailSender');
 const crypto = require('crypto');
 const bcrypt = require('bcrypt');
+const {resetPasswordTemplate}=require('../mail/templates/resetPassword');
 
 const resetPasswordToken = async(req, res) => {
     try {
@@ -20,12 +21,12 @@ const resetPasswordToken = async(req, res) => {
 
         await User.findOneAndUpdate({email: email}, {token: token, resetPasswordExpires: Date.now() + 5 * 60 * 1000}, {new: true});
          
-        const url =  `http://localhost:4000/update-password/${token}`;
+        const url =  `http://localhost:5173/update-password/${token}`;
 
         await mailSender(
 			email,
 			"Password Reset",
-			`Your Link for email verification is ${url}. Please click this url to reset your password.`
+			resetPasswordTemplate(user.firstName, url),
 		);
 
         res.status(200).json({

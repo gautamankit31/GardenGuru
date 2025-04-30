@@ -10,6 +10,7 @@ import PlantDetails from "./components/core/Plant/PlantDetails"
 import ForgotPassword from "./pages/ForgetPassword"
 import Community from "./pages/Community"
 import Dashboard from "./pages/Dashboard"
+import ResetPassword from "./pages/ResetPassword"
 
 function App() {
 
@@ -45,32 +46,12 @@ function App() {
           }
         />
 
-        <Route
-          path="/allplants"
-          element={
-              <AllPlants />
-          }
-        />
-         <Route
-          path="/plant/:id"
-          element={
-              <PlantDetails />
-          }
-        />
-        <Route path="/forgot-password"
-        element={
-          <OpenRoute>
-            <ForgotPassword/>
-          </OpenRoute>
-        }/>
-        <Route path='/community'
-        element={
-           <Community/>
-        }/>
-        <Route path="/dashboard"
-        element={<Dashboard />}
-        />
-        
+        <Route path="/allplants" element={<AllPlants />} />
+        <Route path="/plant/:id" element={<PlantDetails />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/update-password/:token" element={<ResetPassword />} />
+        <Route path="/community" element={<Community />} />
+        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
     </div>
   );

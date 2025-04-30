@@ -72,8 +72,6 @@ function Community() {
   // console.log(user._id);
   // console.log(communities);
   // console.log(currentCommunity.members);
-  console.log(currentCommunity);
-
   const handleJoinLeave = () => {
     if ((currentCommunity.members || []).includes(user?._id)) {
       dispatch(leaveCommunity(currentCommunity._id, token, user));
@@ -128,7 +126,7 @@ function Community() {
   const handleLike = (postId) => {
     const post = posts.find((post) => post._id === postId);
     if (post.likes?.some((like) => like === user._id)) {
-      console.log("remove call");
+      console.log("remove like");
       dispatch(removeLike(postId, token, user));
     } else {
       console.log("add like");
@@ -371,7 +369,7 @@ function Community() {
                       className="px-3 py-1 bg-blue-400 text-white rounded hover:bg-blue-500"
                       onClick={() => handleLike(post._id)}
                     >
-                      {post.likes?.some((like) => like.userId === user._id)
+                      {post.likes?.some((like) => like === user._id)
                         ? "Unlike"
                         : "Like"}{" "}
                       ({post.likes?.length || 0})

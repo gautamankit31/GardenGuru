@@ -62,12 +62,12 @@ const communitySlice = createSlice({
       if (postIndex !== -1) {
         const post = state.posts[postIndex];
         const likeIndex = post.likes.findIndex(
-          (like) => like.userId === userId
+          (like) => like === userId
         );
         if (likeIndex !== -1) {
           post.likes.splice(likeIndex, 1);
         } else {
-          post.likes.push({ userId });
+          post.likes.push(userId );
         }
       }
     },
