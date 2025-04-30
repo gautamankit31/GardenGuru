@@ -10,8 +10,8 @@ import { postEndpoints } from "../api";
 
 export const addLike = (postId,token,user) => {
     return async (dispatch) => {
-        const toastId = toast.loading("Loading...");
-        dispatch(setLoading(true));
+        // const toastId = toast.loading("Loading...");
+        // dispatch(setLoading(true));
         try {
             const response = await apiConnector("PUT", postEndpoints.LIKE_POST_API, { postId },
             {Authorization: `Bearer ${token}`},
@@ -20,21 +20,21 @@ export const addLike = (postId,token,user) => {
             if (!response.data.success) {
                 throw new Error(response.data.message);
             }
-            toast.dismiss(toastId);
             dispatch(setLike({postId,userId:user._id}));
+            // toast.dismiss(toastId);
         } catch (error) {
             console.log("SET LIKE API ERROR............", error);
             toast.error(error?.response?.data?.message || "Something went wrong");
         }
-        dispatch(setLoading(false));
-        toast.dismiss(toastId);
+        // dispatch(setLoading(false));
+        // toast.dismiss(toastId);
     };
 }
 
 export const removeLike = (postId,token,user) => {
     return async (dispatch) => {
-        const toastId = toast.loading("Loading...");
-        dispatch(setLoading(true));
+        // const toastId = toast.loading("Loading...");
+        // dispatch(setLoading(true));
         try {
             const response = await apiConnector("PUT", postEndpoints.UNLIKE_POST_API, { postId },
             {Authorization: `Bearer ${token}`},
@@ -43,14 +43,14 @@ export const removeLike = (postId,token,user) => {
             if (!response.data.success) {
                 throw new Error(response.data.message);
             }
-            toast.dismiss(toastId);
             dispatch(setLike({postId,userId:user._id}));
+            // toast.dismiss(toastId);
         } catch (error) {
             console.log("REMOVE LIKE API ERROR............", error);
             toast.error(error?.response?.data?.message || "Something went wrong");
         }
-        dispatch(setLoading(false));
-        toast.dismiss(toastId);
+        // dispatch(setLoading(false));
+        // toast.dismiss(toastId);
     };
 }
 

@@ -2,8 +2,13 @@ import React, { useEffect, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import PlantTemplate from "../components/core/Plant/PlantTemplate";
 import { plantEndpoints } from "../services/api";
+import { useDispatch, useSelector } from "react-redux";
+import { getGardenPlants } from "../services/operations/Garden";
 
 const AllPlants = () => {
+  const dispatch=useDispatch();
+  const { user } = useSelector((state) => state.profile);
+  const { token } = useSelector((state) => state.auth);
   const [searchValue, setSearchValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
@@ -18,6 +23,11 @@ const AllPlants = () => {
   });
 
   const [showFilters, setShowFilters] = useState(false);
+
+  useEffect(()=>{
+    if(!user) return;
+    dispatch(getGardenPlants(token));
+  },[])
 
   const buildURL = (mode = "initial") => {
     let url = `${plantEndpoints.GET_ALL_PLANTS}&`;

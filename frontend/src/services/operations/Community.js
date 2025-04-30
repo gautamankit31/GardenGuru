@@ -73,8 +73,8 @@ export const getCommunity = (communityId) => {
 
 export const getMembers = (communityId,token) => {
   return async (dispatch) => {
-    const toastId = toast.loading("Loading...");
-    dispatch(setLoading(true));
+    // const toastId = toast.loading("Loading...");
+    // dispatch(setLoading(true));
     try {
       const response = await apiConnector(
         "POST",
@@ -86,14 +86,14 @@ export const getMembers = (communityId,token) => {
       if (!response.data.success) {
         throw new Error(response.data.message);
       }
-      toast.dismiss(toastId);
+      // toast.dismiss(toastId);
       dispatch(setMembers(response.data.members));
     } catch (error) {
       console.log("GET MEMBERS API ERROR............", error);
       toast.error(error?.response?.data?.message || "Something went wrong");
     }
-    dispatch(setLoading(false));
-    toast.dismiss(toastId);
+    // dispatch(setLoading(false));
+    // toast.dismiss(toastId);
   };
 };
 

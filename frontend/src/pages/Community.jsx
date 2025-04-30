@@ -45,7 +45,8 @@ function Community() {
 
   useEffect(() => {
     if (currentCommunity && token) {
-      dispatch(getPosts(currentCommunity._id, token)); // Fetch posts for the current community
+      console.log("yaha wala call")
+      dispatch(getPosts(currentCommunity._id, token));
       dispatch(getMembers(currentCommunity._id, token));
     }
   }, [currentCommunity]);
@@ -195,8 +196,8 @@ function Community() {
                   key={community._id}
                   onClick={() => {
                     dispatch(setCurrentCommunity(community));
-                    dispatch(getPosts(community._id, token));
-                    dispatch(getMembers(community._id, token));
+                    // dispatch(getPosts(community._id, token));
+                    // dispatch(getMembers(community._id, token));
                     setShowCreateForm(false);
                   }}
                   className={`px-3 py-2 rounded-md cursor-pointer hover:bg-gray-100 transition ${
@@ -225,8 +226,8 @@ function Community() {
                 key={community._id}
                 onClick={() => {
                   dispatch(setCurrentCommunity(community));
-                  dispatch(getPosts(community._id, token));
-                  dispatch(getMembers(community._id, token));
+                  // dispatch(getPosts(community._id, token));
+                  // dispatch(getMembers(community._id, token));
                   setShowCreateForm(false);
                 }}
                 className={`px-3 py-2 rounded-md cursor-pointer hover:bg-gray-100 transition ${

@@ -140,10 +140,17 @@ const addPlantToGarden = async (req, res) => {
 
     await garden.save();
 
+    const lastAddedPlant = await garden.populate({
+      path: "plants.plant",
+      select: "_id id common_name default_image lastWatered lastSoilChanged wateringFrequency soilChangeFrequency",
+    });
+
+    const addedPlant = lastAddedPlant.plants[lastAddedPlant.plants.length - 1];
+
     return res.status(200).json({
       success: true,
       message: "Plant added to garden",
-      garden,
+      addedPlant,
     });
   } catch (error) {
     console.log(error);
@@ -154,18 +161,34 @@ const addPlantToGarden = async (req, res) => {
   }
 };
 
-const getGardenPlants= async (req,res)=>{
 
+const getGardenPlants = async (req, res) => {
   try {
     const userId = req.user.id;
-    const user = await User.findById(userId).populate("garden");
-    const garden = user.garden;
 
-    res.status(200).json({ message: "Garden plants retrieved successfully", plants: garden.plants });
+    const user = await User.findById(userId).populate({
+      path: "garden",
+      populate: {
+        path: "plants.plant",
+      },
+    });
+
+    if (!user || !user.garden) {
+      return res.status(404).json({
+        success: false,
+        message: "User or garden not found",
+      });
+    }
+    res.status(200).json({
+      success: true,
+      message: "Garden plants retrieved successfully",
+      garden:user.garden,
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-}
+};
+
 
 module.exports = {
     editGardenName,
