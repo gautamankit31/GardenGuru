@@ -26,5 +26,5 @@ const GeminiSlice = createSlice({
         }
     },
 });
-
+export const {setLoading,setError,addUserPrompt,botConversations}=GeminiSlice.actions;
 export default GeminiSlice.reducer;

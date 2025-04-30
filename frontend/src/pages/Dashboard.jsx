@@ -1,19 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { plantEndpoints } from "../services/api";
-import { addPlantToTheGarden } from "../services/operations/Garden";
+import {
+  addPlantToTheGarden,
+  getGardenPlants,
+} from "../services/operations/Garden";
 import { useNavigate } from "react-router-dom";
+import PlantTemplate from "../components/core/Plant/PlantTemplate";
 
 function Dashboard() {
   const API_KEY = import.meta.env.VITE_API_WEATHER_KEY;
   const { user } = useSelector((state) => state.profile);
   const { token } = useSelector((state) => state.auth);
+  const { plants, name, isLoading } = useSelector((state) => state.garden);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [hardinessZone, setHardinessZone] = useState("");
   const [data, setData] = useState([]);
-  const [visiblePlants, setVisiblePlants] = useState(3);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -23,9 +27,13 @@ function Dashboard() {
     }
   }, [user?.pincode]);
 
+  useEffect(() => {
+    if (!user) return;
+    dispatch(getGardenPlants(token));
+  }, [user, dispatch, token]);
+
   const plantDetailsHandler = (plant) => {
     if (!plant?.id) return;
-    console.log(plant)
     navigate(`/plant/${plant.id}`);
   };
 
@@ -75,83 +83,81 @@ function Dashboard() {
   }, [hardinessZone]);
 
   return (
-    <div className="min-h-screen p-6 bg-gray-50">
-      <div className="flex flex-col md:flex-row gap-6">
-        {/* Profile Section */}
-        <div className="md:w-1/4 w-full bg-white rounded-lg shadow p-4">
-          <img
-            src={user.image}
-            alt="User Avatar"
-            className="rounded-full h-[100px] w-[100px] mx-auto mb-4"
-          />
-          <div className="text-center space-y-1">
-            <h3 className="text-lg font-semibold">{user.firstName} {user.lastName}</h3>
-            <p className="text-gray-600">Email: {user.email}</p>
-            <p className="text-gray-600">PinCode: {user.pincode}</p>
-            {hardinessZone && (
-              <p className="text-green-600 font-medium">Zone: {hardinessZone}</p>
-            )}
-            {error && <p className="text-red-500 text-sm">{error}</p>}
-          </div>
+    <div className="min-h-screen p-6 bg-gray-50 flex gap-6">
+      {/* Left Profile Section */}
+      <div className="w-full md:w-1/4 bg-white rounded-lg shadow p-4 flex flex-col items-center">
+        <img
+          src={user.image}
+          alt="User Avatar"
+          className="rounded-full h-[100px] w-[100px] mb-4"
+        />
+        <div className="text-center space-y-1">
+          <h3 className="text-lg font-semibold">
+            {user.firstName} {user.lastName}
+          </h3>
+          <p className="text-gray-600">Email: {user.email}</p>
+          <p className="text-gray-600">PinCode: {user.pincode}</p>
+          {hardinessZone && (
+            <p className="text-green-600 font-medium">Zone: {hardinessZone}</p>
+          )}
+          {error && <p className="text-red-500 text-sm">{error}</p>}
         </div>
+      </div>
 
-        {/* Plants Section */}
-        <div className="md:w-3/4 w-full">
+      {/* Right Plant and Garden Sections */}
+      <div className="flex-1 flex flex-col gap-6">
+        {/* Suggested Plants Section */}
+        <div className="w-full max-w-[1000px] pb-2">
           <h1 className="text-2xl font-bold mb-4">Suggested Plants</h1>
           {loading ? (
             <p>Loading plant data...</p>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {data.slice(0, visiblePlants).map((plant, index) => (
-                <div
-                  key={index}
-                  className="bg-white rounded-lg shadow p-4 hover:shadow-md transition"
-                >
-                  <h2
-                    className="text-lg font-semibold text-center hover:underline cursor-pointer"
-                    onClick={() => plantDetailsHandler(plant)}
+            <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 rounded-md">
+              <div className="flex space-x-4 w-max">
+                {data.map((plant, index) => (
+                  <div
+                    key={plant.id}
+                    className="transform transition-transform duration-300 hover:scale-105 hover:shadow-lg"
                   >
-                    {plant.common_name}
-                  </h2>
-                  {/* <p className="text-gray-600">{plant.description}</p> */}
-                  <img
-                    src={plant.default_image?.thumbnail || plant.default_image?.original_url}
-                    alt={plant.common_name}
-                    className="mt-2 w-full h-40 object-cover rounded"
-                  />
-                  <div className="flex justify-center mt-4">
-                    <button
-                      className="bg-[#20b486] text-white px-4 py-2 rounded-full hover:bg-[#17996f] transition"
-                      onClick={() =>
-                        dispatch(
-                          addPlantToTheGarden(
-                            plant.id,
-                            plant.common_name,
-                            plant.default_image?.medium_url,
-                            0,
-                            0,
-                            token
-                          )
-                        )
-                      }
-                    >
-                      Add to Garden
-                    </button>
+                    <PlantTemplate plant={plant} />
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           )}
-          {/* See More Button */}
-          {visiblePlants < data.length && (
-            <div className="text-center mt-6">
-              <button
-                onClick={() => setVisiblePlants(data.length)}
-                className="text-blue-600 font-semibold hover:underline"
-              >
-                See More Plants
-              </button>
+        </div>
+
+        {/* Garden Section */}
+        <div className="w-full max-w-[1000px] pb-2">
+          <h1 className="text-2xl font-bold mb-4">{name}</h1>
+          {plants.length > 0 ? (
+            <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-green-300 scrollbar-track-gray-100 rounded-md">
+              <div className="flex space-x-4 w-max">
+                {plants.map((p, index) => (
+                  <div
+                    key={index}
+                    className="flex-shrink-0 snap-start w-80 bg-white rounded-lg shadow p-4 transform transition-transform duration-300 hover:scale-105 hover:shadow-lg"
+                  >
+                    <h2 className="text-lg font-semibold text-center">
+                      {p?.plant?.name}
+                    </h2>
+                    <img
+                      src={p?.plant?.image}
+                      alt={p?.plant?.name}
+                      className="mt-2 w-full h-40 object-cover rounded"
+                    />
+                    <p className="mt-2 text-sm text-gray-600">
+                      Last Soil Change: {p?.plant?.lastSoilChanged}
+                    </p>
+                    <p className="mt-1 text-sm text-gray-600">
+                      Last Watered: {p?.plant?.lastWatered}
+                    </p>
+                  </div>
+                ))}
+              </div>
             </div>
+          ) : (
+            <p>No plants in your garden yet.</p>
           )}
         </div>
       </div>
