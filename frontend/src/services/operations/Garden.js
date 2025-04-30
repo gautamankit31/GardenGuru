@@ -1,25 +1,52 @@
 import toast from 'react-hot-toast';
-import {deletePlant, addPlantToGarden, editGardenName,setLoading,editPlantNickname,editPlantSoilChangeFrequency,editPlantWateringFrequency } from '../../slices/GardenSlice';
+import {setGardenPlants,deletePlant, addPlantToGarden, editGardenName,setLoading,editPlantNickname,editPlantSoilChangeFrequency,editPlantWateringFrequency } from '../../slices/GardenSlice';
 import { apiConnector } from '../apiConnector';
+import { gardenEndpoints } from '../api';
 
-export const addPlantToGarden = (
+export const getGardenPlants=()=>{
+  return async (dispatch) => {
+
+    const toastId = toast.loading("Loading...");
+    dispatch(setLoading(true));
+    try {
+      const response = await apiConnector("GET", gardenEndpoints.GET_GARDEN_PLANTS_API);
+      console.log("GET GARDEN PLANTS API RESPONSE............", response.data);
+      if (!response.data.success) {
+        throw new Error(response.data.message);
+      }
+      toast.dismiss(toastId);
+      toast.success("Garden plants retrieved successfully");
+      // dispatch(setGardenPlants(response.data.plants));
+    } catch (error) {
+      console.log("GET GARDEN PLANTS API ERROR............", error);
+      toast.error(error?.response?.data?.message);
+    }
+    dispatch(setLoading(false));
+    toast.dismiss(toastId);
+  }
+}
+
+export const addPlantToTheGarden = (
   plantId,
   name,
   image,
   wateringFrequency,
-  soilChangeFrequency
+  soilChangeFrequency,
+  token
 ) => {
   return async (dispatch) => {
     const toastId = toast.loading("Loading...");
     dispatch(setLoading(true));
     try {
-        const response = await apiConnector("POST", endpoints.ADD_PLANT_TO_GARDEN_API, {
+        const response = await apiConnector("PUT", gardenEndpoints.ADD_PLANT_TO_GARDEN_API, {
             plantId,
             name,
             image,
             wateringFrequency,
             soilChangeFrequency,
-        });
+        },
+      {Authorization: `Bearer ${token}`},
+      );
         console.log("ADD PLANT TO GARDEN API RESPONSE............", response.data);
         if (!response.data.success) {
             throw new Error(response.data.message);
@@ -36,7 +63,7 @@ export const addPlantToGarden = (
   };
 };
 
-export const editGardenName = (name) => {
+export const editTheGardenName = (name) => {
   return async (dispatch) => {
     const toastId = toast.loading("Loading...");
     dispatch(setLoading(true));
@@ -60,7 +87,7 @@ export const editGardenName = (name) => {
   };
 }
 
-export const editPlantNickname = (plantId, nickname) => {
+export const editThePlantNickname = (plantId, nickname) => {
   return async (dispatch) => {
     const toastId = toast.loading("Loading...");
     dispatch(setLoading(true));
@@ -85,7 +112,7 @@ export const editPlantNickname = (plantId, nickname) => {
   };
 };
 
-export const editPlantWateringFrequency = (plantId, frequency) => {
+export const editThePlantWateringFrequency = (plantId, frequency) => {
   return async (dispatch) => {
     const toastId = toast.loading("Loading...");
     dispatch(setLoading(true));
@@ -110,7 +137,7 @@ export const editPlantWateringFrequency = (plantId, frequency) => {
   };
 };
 
-export const editPlantSoilChangeFrequency = (plantId, frequency) => {
+export const editThePlantSoilChangeFrequency = (plantId, frequency) => {
   return async (dispatch) => {
     const toastId = toast.loading("Loading...");
     dispatch(setLoading(true));
@@ -135,7 +162,7 @@ export const editPlantSoilChangeFrequency = (plantId, frequency) => {
   };
 };
 
-export const deletePlant = (plantId) => {
+export const deleteThePlant = (plantId) => {
   return async (dispatch) => {
     const toastId = toast.loading("Loading...");
     dispatch(setLoading(true));

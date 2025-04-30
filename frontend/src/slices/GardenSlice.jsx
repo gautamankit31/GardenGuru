@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  name: "",
+  name: "Garden",
   plant: [],
   loading: false,
 };
@@ -10,6 +10,9 @@ const gardenSlice = createSlice({
   name: "garden",
   initialState,
   reducers: {
+    setGardenPlants:(state,action)=>{
+      state.plant=action.payload;
+    },
     editGardenName: (state, action) => {
       state.name = action.payload;
     },
@@ -42,6 +45,7 @@ const gardenSlice = createSlice({
 });
 
 export const {
+  setGardenPlants,
   editGardenName,
   addPlantToGarden,
   editPlantNickname,

@@ -41,6 +41,9 @@ export const geminiEndpoints = {
   };
 
 export const gardenEndpoints = {
+  //get garden plants
+
+  GET_GARDEN_PLANTS_API: BASE_URL + "/garden/getGardenPlants",
     //edit garden name
     EDIT_GARDEN_NAME_API: BASE_URL + "/garden/editGardenName",
     //edit plant nickname
@@ -96,5 +99,6 @@ export const settingsEndpoints = {
 export const plantEndpoints = {
   GET_ALL_PLANTS: `https://perenual.com/api/v2/species-list?key=${KEY}`,
   GET_PLANT_BY_ID: `https://perenual.com/api/v2/species/details`,
-  GET_PLANT_CARE_GUIDE: `https://perenual.com/api/species-care-guide-list?key=${KEY}`
+  GET_PLANT_CARE_GUIDE: `https://perenual.com/api/species-care-guide-list?key=${KEY}`,
+  
 };

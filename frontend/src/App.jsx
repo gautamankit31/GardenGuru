@@ -9,6 +9,7 @@ import AllPlants from "./pages/AllPlants"
 import PlantDetails from "./components/core/Plant/PlantDetails"
 import ForgotPassword from "./pages/ForgetPassword"
 import Community from "./pages/Community"
+import Dashboard from "./pages/Dashboard"
 
 function App() {
 
@@ -66,6 +67,10 @@ function App() {
         element={
            <Community/>
         }/>
+        <Route path="/dashboard"
+        element={<Dashboard />}
+        />
+        
       </Routes>
     </div>
   );

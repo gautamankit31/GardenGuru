@@ -1,10 +1,11 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { addPlantToGarden } from '../../../slices/GardenSlice';
+import { addPlantToTheGarden } from '../../../services/operations/Garden';
 import { useDispatch, useSelector } from 'react-redux';
 
 const PlantTemplate = ({ plant }) => {
   const { user } = useSelector((state) => state.profile);
+  const { token } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -14,22 +15,13 @@ const PlantTemplate = ({ plant }) => {
   };
 
   const addPlantToGardenHandler = async () => {
-    const plantxdata = await fetch(`${plantEndpoints.GET_PLANT_BY_ID}/${plant.id}?key=${KEY}`);
-    const plantData = await plantxdata.json();
     const plantId = plant.id;
-    const name = plant.common_name;
-    const image = plant.default_image?.medium_url;
-    const wateringFrequency = plantData.water; // default value
-    const soilChangeFrequency = plantData.soil; // default value
-    dispatch(
-      addPlantToGarden(
-        plantId,
-        name,
-        image,
-        wateringFrequency,
-        soilChangeFrequency
-      )
-    );
+    const plantName = plant.common_name;
+    const plantImage = plant.default_image?.medium_url;
+
+    // Dispatch the action to add the plant to the garden
+    dispatch(addPlantToTheGarden( plantId, plantName, plantImage,0,0,token ));
+    // Optionally, navigate to the garden page or show a success message
   };
 
   return (

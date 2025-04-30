@@ -107,38 +107,42 @@ const editPlantSoilChangeFrequency=async(req,res)=>{
 //add plant to garden
 const addPlantToGarden = async (req, res) => {
   try {
-    const { gardenId, plantId, nickname, reminderType, lastAction, nextAction } = req.body;
+    const { plantId, image,name, wateringFrequency, soilChangeFrequency } = req.body;
+    const userId=req.user.id;
+    console.log(plantId,image,name,wateringFrequency,soilChangeFrequency)
 
-    // Find the garden by ID
-    const garden = await Garden.findById(gardenId);
-    if (!garden) {
-      return res.status(404).json({
-        success: false,
-        message: "Garden not found",
-      });
+    if (!plantId || !image ) {
+      return res.status(400).json({ message: "Please fill all fields" });
     }
 
-    // Add plant to the garden
+    const user = await User.findById(userId).populate("garden");
+    const garden = user.garden;
+    let checkPlantExist=await Plant.findOne({ id: plantId });
+    if (!checkPlantExist) {
+      checkPlantExist = await Plant.create({
+        id:plantId,
+        name,
+        image,
+        wateringFrequency,
+        soilChangeFrequency,
+      });
+    }
+    
+
+    const existingPlant = garden.plants.find((plant) => plant.plant.toString() === checkPlantExist._id.toString());
+    if (existingPlant) {
+      return res.status(400).json({ message: "Plant already exists in the garden" });
+    }
     garden.plants.push({
-      plant: plantId,
-      nickname: nickname,
-      addedAt: new Date(),
+      plant: checkPlantExist._id,
+      nickname: req.body?.nickname || name,
     });
 
-    // Add reminder to the garden
-    garden.reminders.push({
-      type: reminderType,
-      plant: plantId,
-      lastAction: lastAction,
-      nextAction: nextAction,
-    });
-
-    // Save the updated garden
     await garden.save();
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
-      message: "Plant and reminder added to garden successfully",
+      message: "Plant added to garden",
       garden,
     });
   } catch (error) {
@@ -150,10 +154,24 @@ const addPlantToGarden = async (req, res) => {
   }
 };
 
+const getGardenPlants= async (req,res)=>{
+
+  try {
+    const userId = req.user.id;
+    const user = await User.findById(userId).populate("garden");
+    const garden = user.garden;
+
+    res.status(200).json({ message: "Garden plants retrieved successfully", plants: garden.plants });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
 module.exports = {
     editGardenName,
     editPlantNickname,
     editPlantWateringFrequency,
     editPlantSoilChangeFrequency,
     addPlantToGarden,
+    getGardenPlants
     };

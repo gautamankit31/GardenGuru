@@ -30,12 +30,7 @@ const userSchema = new mongoose.Schema({
     ref: "Profile",
     required: true,
   },
-  location: {
-    pincode: { type: Number },
-    city: { type: String, trim: true },
-    country: { type: String },
-    coordinates: { lat: Number, lon: Number },
-  },
+  pincode: { type: Number },
   garden: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Garden",

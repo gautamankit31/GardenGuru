@@ -6,7 +6,7 @@ const Garden = require("../models/Garden");
 const addPlant = async (req, res) => {
     try {
         //fetch data
-        const { userId } = req.user.id;
+        const userId  = req.user.id;
         const { plantId, name,image,wateringFrequency,soilChangeFrequency} = req.body;
         //validate
         if (!plantId || !name || !image || !wateringFrequency || !soilChangeFrequency) {

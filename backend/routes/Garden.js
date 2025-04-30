@@ -9,6 +9,7 @@ const {
   editPlantWateringFrequency,
   editPlantSoilChangeFrequency,
   addPlantToGarden,
+  getGardenPlants,
 } = require("../controllers/Garden");
 
 const { 
@@ -22,6 +23,8 @@ router.put("/editPlantNickname", auth, editPlantNickname);
 router.put("/editPlantWateringFrequency", auth, editPlantWateringFrequency);
 router.put("/editPlantSoilChangeFrequency", auth, editPlantSoilChangeFrequency);
 router.put("/addPlantToGarden", auth, addPlantToGarden);
+
+router.get("/getGardenPlants", auth, getGardenPlants);
 
 router.post("/addPlant", auth, addPlant);
 router.delete("/deletePlant", auth, deletePlant);

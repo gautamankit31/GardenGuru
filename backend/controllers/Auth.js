@@ -133,6 +133,7 @@ const signup=async(req,res,next)=>{
             password:hashedPassword,
             accountType,
             garden:userGarden,
+            pincode,
             additionalDetails:profileDetails._id,
             image: `https://api.dicebear.com/5.x/initials/svg?seed=${firstName} ${lastName}`
         })
@@ -166,6 +167,7 @@ const login=async(req,res)=>{
     }
     //check user is registered or not
     const user=await User.findOne({email:email});
+    console.log(user);
 
     if(!user){
         return res.status(401).json({
@@ -191,7 +193,7 @@ const login=async(req,res)=>{
         accountType: user.accountType,
     }
     const token=jwt.sign(payload,process.env.JWT_SECRET,{
-        expiresIn:"2h"
+        expiresIn:"10h"
     });
 
     user.token=token;
