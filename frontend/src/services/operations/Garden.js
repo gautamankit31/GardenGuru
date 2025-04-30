@@ -3,20 +3,23 @@ import {setGardenPlants,deletePlant, addPlantToGarden, editGardenName,setLoading
 import { apiConnector } from '../apiConnector';
 import { gardenEndpoints } from '../api';
 
-export const getGardenPlants=()=>{
+export const getGardenPlants=(token)=>{
   return async (dispatch) => {
 
     const toastId = toast.loading("Loading...");
     dispatch(setLoading(true));
     try {
-      const response = await apiConnector("GET", gardenEndpoints.GET_GARDEN_PLANTS_API);
+      const response = await apiConnector("GET", gardenEndpoints.GET_GARDEN_PLANTS_API,null
+      ,{Authorization: `Bearer ${token}`},
+      );
       console.log("GET GARDEN PLANTS API RESPONSE............", response.data);
       if (!response.data.success) {
         throw new Error(response.data.message);
       }
       toast.dismiss(toastId);
       toast.success("Garden plants retrieved successfully");
-      // dispatch(setGardenPlants(response.data.plants));
+      dispatch(setGardenPlants(response.data.garden?.plants));
+      dispatch(editGardenName(response.data.garden.name));
     } catch (error) {
       console.log("GET GARDEN PLANTS API ERROR............", error);
       toast.error(error?.response?.data?.message);
@@ -53,7 +56,7 @@ export const addPlantToTheGarden = (
         }
         toast.dismiss(toastId);
         toast.success("Plant added to garden successfully");
-        dispatch(addPlantToGarden(response.data.plant));
+        dispatch(addPlantToGarden(response.data.addedPlant));
     } catch (error) {
       console.log("ADD PLANT TO GARDEN API ERROR............", error);
       toast.error(error?.response?.data?.message);
