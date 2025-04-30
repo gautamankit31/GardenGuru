@@ -21,7 +21,7 @@ const resetPasswordToken = async(req, res) => {
 
         await User.findOneAndUpdate({email: email}, {token: token, resetPasswordExpires: Date.now() + 5 * 60 * 1000}, {new: true});
          
-        const url =  `http://localhost:5173/update-password/${token}`;
+        const url =  `${process.env.URL_PASSWORD_RESET}${token}`;
 
         await mailSender(
 			email,
