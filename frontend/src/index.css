@@ -4,3 +4,10 @@
 html, body, #root {
   @apply font-sans;
 } */
+
+.active{
+  @apply text-[#20b486];
+  @apply font-bold;
+  @apply transition duration-300 ease-in-out;
+  @apply hover:text-red-500;
+}
