@@ -1,4 +1,5 @@
-const User=require('mongoose');
+const mongoose = require('mongoose');
+const User=require('../models/User');
 const Profile=require('../models/Profile');
 const Community=require('../models/Community');
 const Garden=require('../models/Garden');

@@ -86,23 +86,39 @@ function Dashboard() {
     <div className="min-h-screen p-6 bg-gray-50 flex gap-6">
       {/* Left Profile Section */}
       <div className="w-full md:w-1/4 bg-white rounded-lg shadow p-4 flex flex-col items-center">
-        <img
-          src={user.image}
-          alt="User Avatar"
-          className="rounded-full h-[100px] w-[100px] mb-4"
-        />
-        <div className="text-center space-y-1">
-          <h3 className="text-lg font-semibold">
-            {user.firstName} {user.lastName}
-          </h3>
-          <p className="text-gray-600">Email: {user.email}</p>
-          <p className="text-gray-600">PinCode: {user.pincode}</p>
-          {hardinessZone && (
-            <p className="text-green-600 font-medium">Zone: {hardinessZone}</p>
-          )}
-          {error && <p className="text-red-500 text-sm">{error}</p>}
-        </div>
+      <img
+        src={user.image}
+        alt="User Avatar"
+        className="rounded-full h-[100px] w-[100px] mb-4 object-cover"
+      />
+      <button
+      onClick={() => navigate("/dashboard/settings")}
+      className='bg-[#20b486] text-white px-4 py-2 rounded-md hover:bg-[#20b43c] flex items-center gap-2'
+    >
+      Edit
+    </button>
+      <div className="text-center space-y-1 mb-4">
+        <h3 className="text-lg font-semibold">
+          {user.firstName} {user.lastName}
+        </h3>
+        <p className="text-gray-600 break-words">Email: {user.email}</p>
+        <p className="text-gray-600">Phone: {user.additionalDetails?.contactNumber ?? "N/A"}</p>
+        <p className="text-gray-600">Gender: {user.additionalDetails?.gender ?? "N/A"}</p>
+        <p className="text-gray-600">Date of Birth: {user.additionalDetails?.dateOfBirth ?? "N/A"}</p>
+        <p className="text-gray-600">PinCode: {user.pincode}</p>
+        <p className="text-gray-600">About: {user.additionalDetails?.about ?? "N/A"}</p>
+        {hardinessZone && (
+          <p className="text-green-600 font-medium">Zone: {hardinessZone}</p>
+        )}
+        {error && <p className="text-red-500 text-sm">{error}</p>}
       </div>
+
+      {/* Edit Button */}
+      {/* <IconBtn
+        text="Edit"
+        onclick={() => navigate("/dashboard/settings")}
+      /> */}
+    </div>
 
       {/* Right Plant and Garden Sections */}
       <div className="flex-1 flex flex-col gap-6">
