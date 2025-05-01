@@ -109,7 +109,6 @@ const addPlantToGarden = async (req, res) => {
   try {
     const { plantId, image,name, wateringFrequency, soilChangeFrequency } = req.body;
     const userId=req.user.id;
-    console.log(plantId,image,name,wateringFrequency,soilChangeFrequency)
 
     if (!plantId || !image ) {
       return res.status(400).json({ message: "Please fill all fields" });
@@ -161,6 +160,37 @@ const addPlantToGarden = async (req, res) => {
   }
 };
 
+const deletePlantFromGarden = async (req, res) => {
+  try {
+    const { plantId } = req.body;
+    const userId = req.user.id;
+
+    if (!plantId) {
+      return res.status(400).json({ message: "Please provide a plant ID" });
+    }
+
+    const user = await User.findById(userId).populate("garden");
+    const garden = user.garden;
+
+    const plantIndex = garden.plants.findIndex((plant) => plant.plant.toString() === plantId);
+
+    if (plantIndex === -1) {
+      return res.status(404).json({ message: "Plant not found in the garden" });
+    }
+
+    garden.plants.splice(plantIndex, 1);
+    await garden.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Plant removed from garden successfully",
+      garden,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
 
 const getGardenPlants = async (req, res) => {
   try {
@@ -196,5 +226,6 @@ module.exports = {
     editPlantWateringFrequency,
     editPlantSoilChangeFrequency,
     addPlantToGarden,
-    getGardenPlants
+    getGardenPlants,
+    deletePlantFromGarden,
     };

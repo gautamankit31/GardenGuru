@@ -1,30 +1,59 @@
-// reminderScheduler.js
 const cron = require('node-cron');
-const Plant = require('../models/Plant');
-const {mailSender} = require('./mailSender');
+const User = require('../models/User');
+const Garden = require('../models/Garden');
+const { mailSender } = require('./mailSender');
 
 cron.schedule('0 * * * *', async () => {
-  const plants = await Plant.find();
+  try {
+    const users = await User.find().populate('garden');
+    const now = new Date();
 
-  const now = new Date();
+    for (const user of users) {
+      const garden = user.garden;
 
-  plants.forEach(async (plant) => {
-    const nextWater = new Date(plant.lastWatered);
-    nextWater.setDate(nextWater.getDate() + plant.wateringFrequency);
+      if (!garden || !garden.plants || garden.plants.length === 0) continue;
 
-    const nextSoil = new Date(plant.lastSoilChanged);
-    nextSoil.setDate(nextSoil.getDate() + plant.soilChangeFrequency);
+      let gardenModified = false;
 
-    if (now >= nextWater) {
-        // send watering reminder
-        await mailSender(plant.userEmail, 'Water your plant', `It's time to water your ${plant.name}!`);
-        await Plant.findByIdAndUpdate(plant._id, { lastWatered: now });
+      for (const plant of garden.plants) {
+        const plantMeta = plant.plant;
+        if (!plantMeta || plantMeta.wateringFrequency == null || plantMeta.soilChangeFrequency == null) continue;
+
+        const nextWater = new Date(plant.lastWatered);
+        nextWater.setDate(nextWater.getDate() + plantMeta.wateringFrequency);
+
+        const nextSoil = new Date(plant.lastSoilChanged);
+        nextSoil.setDate(nextSoil.getDate() + plantMeta.soilChangeFrequency);
+
+        const shouldWater = now >= nextWater;
+        const shouldChangeSoil = now >= nextSoil;
+
+        if (shouldWater) {
+          await mailSender(
+            user.email,
+            'Water Reminder - GardenGuru 🌿',
+            `Hi ${user.firstName},\n\nIt's time to water your ${plantMeta.name}!`
+          );
+          plant.lastWatered = now;
+          gardenModified = true;
+        }
+
+        if (shouldChangeSoil) {
+          await mailSender(
+            user.email,
+            'Soil Change Reminder - GardenGuru 🌱',
+            `Hi ${user.firstName},\n\nTime to change the soil for your ${plantMeta.name}!`
+          );
+          plant.lastSoilChanged = now;
+          gardenModified = true;
+        }
+      }
+
+      if (gardenModified) {
+        await garden.save();
+      }
     }
-
-    if (now >= nextSoil) {
-        // send soil change reminder
-       await mailSender(plant.userEmail, 'Change your plant soil', `It's time to change the soil for your ${plant.name}!`);
-       await Plant.findByIdAndUpdate(plant._id, { lastSoilChanged: now });
-    }
-  });
+  } catch (error) {
+    console.error('Error in reminder scheduler:', error);
+  }
 });

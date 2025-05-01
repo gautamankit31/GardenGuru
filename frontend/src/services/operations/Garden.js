@@ -165,14 +165,15 @@ export const editThePlantSoilChangeFrequency = (plantId, frequency) => {
   };
 };
 
-export const deleteThePlant = (plantId) => {
+export const deleteThePlant = (plantId,token) => {
   return async (dispatch) => {
     const toastId = toast.loading("Loading...");
     dispatch(setLoading(true));
     try {
-      const response = await apiConnector("DELETE", endpoints.DELETE_PLANT_API, {
+      const response = await apiConnector("DELETE", gardenEndpoints.DELETE_PLANT_FROM_GARDEN_API, {
         plantId,
-      });
+      },
+      {Authorization: `Bearer ${token}`},);
       console.log("DELETE PLANT API RESPONSE............", response.data);
       if (!response.data.success) {
         throw new Error(response.data.message);

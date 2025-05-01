@@ -36,7 +36,7 @@ const gardenSlice = createSlice({
     },
     deletePlant: (state, action) => {
       const id = action.payload;
-      state.plants = state.plants.filter(p => p.id !== id);
+      state.plants = state.plants.filter(p => p.plant._id !== id);
     },
     setLoading: (state, action) => {
       state.loading = action.payload;

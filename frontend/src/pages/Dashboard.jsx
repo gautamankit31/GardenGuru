@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { plantEndpoints } from "../services/api";
 import {
-  addPlantToTheGarden,
   getGardenPlants,
+  deleteThePlant
 } from "../services/operations/Garden";
 import { useNavigate } from "react-router-dom";
 import PlantTemplate from "../components/core/Plant/PlantTemplate";
@@ -78,6 +78,10 @@ function Dashboard() {
     }
   };
 
+  const handleDeletePlant = (plantId) => {
+    dispatch(deleteThePlant(plantId, token));
+  };
+
   useEffect(() => {
     if (hardinessZone) fetchData(hardinessZone);
   }, [hardinessZone]);
@@ -86,43 +90,42 @@ function Dashboard() {
     <div className="min-h-screen p-6 bg-gray-50 flex gap-6">
       {/* Left Profile Section */}
       <div className="w-full md:w-1/4 bg-white rounded-lg shadow p-4 flex flex-col items-center">
-      <img
-        src={user.image}
-        alt="User Avatar"
-        className="rounded-full h-[100px] w-[100px] mb-4 object-cover"
-      />
-      <button
-      onClick={() => navigate("/dashboard/settings")}
-      className='bg-[#20b486] text-white px-4 py-2 rounded-md hover:bg-[#20b43c] flex items-center gap-2'
-    >
-      Edit
-    </button>
-      <div className="text-center space-y-1 mb-4">
-        <h3 className="text-lg font-semibold">
-          {user.firstName} {user.lastName}
-        </h3>
-        <p className="text-gray-600 break-words">Email: {user.email}</p>
-        <p className="text-gray-600">Phone: {user.additionalDetails?.contactNumber ?? "N/A"}</p>
-        <p className="text-gray-600">Gender: {user.additionalDetails?.gender ?? "N/A"}</p>
-        <p className="text-gray-600">Date of Birth: {user.additionalDetails?.dateOfBirth ?? "N/A"}</p>
-        <p className="text-gray-600">PinCode: {user.pincode}</p>
-        <p className="text-gray-600">About: {user.additionalDetails?.about ?? "N/A"}</p>
-        {hardinessZone && (
-          <p className="text-green-600 font-medium">Zone: {hardinessZone}</p>
-        )}
-        {error && <p className="text-red-500 text-sm">{error}</p>}
+        <img
+          src={user.image}
+          alt="User Avatar"
+          className="rounded-full h-[100px] w-[100px] mb-4 object-cover"
+        />
+        <button
+          onClick={() => navigate("/dashboard/settings")}
+          className="bg-[#20b486] text-white px-4 py-2 rounded-md hover:bg-[#20b43c] flex items-center gap-2"
+        >
+          Edit
+        </button>
+        <div className="text-center space-y-1 mb-4">
+          <h3 className="text-lg font-semibold">
+            {user.firstName} {user.lastName}
+          </h3>
+          <p className="text-gray-600 break-words">Email: {user.email}</p>
+          <p className="text-gray-600">
+            Phone: {user.additionalDetails?.contactNumber ?? "N/A"}
+          </p>
+          <p className="text-gray-600">
+            Gender: {user.additionalDetails?.gender ?? "N/A"}
+          </p>
+          <p className="text-gray-600">
+            Date of Birth: {user.additionalDetails?.dateOfBirth ?? "N/A"}
+          </p>
+          <p className="text-gray-600">PinCode: {user.pincode}</p>
+          <p className="text-gray-600">
+            About: {user.additionalDetails?.about ?? "N/A"}
+          </p>
+          {hardinessZone && (
+            <p className="text-green-600 font-medium">Zone: {hardinessZone}</p>
+          )}
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+        </div>
       </div>
-
-      {/* Edit Button */}
-      {/* <IconBtn
-        text="Edit"
-        onclick={() => navigate("/dashboard/settings")}
-      /> */}
-    </div>
-
-      {/* Right Plant and Garden Sections */}
       <div className="flex-1 flex flex-col gap-6">
-        {/* Suggested Plants Section */}
         <div className="w-full max-w-[1000px] pb-2">
           <h1 className="text-2xl font-bold mb-4">Suggested Plants</h1>
           {loading ? (
@@ -163,11 +166,17 @@ function Dashboard() {
                       className="mt-2 w-full h-40 object-cover rounded"
                     />
                     <p className="mt-2 text-sm text-gray-600">
-                      Last Soil Change: {p?.plant?.lastSoilChanged}
+                      Last Soil Change: {p?.lastSoilChanged}
                     </p>
                     <p className="mt-1 text-sm text-gray-600">
-                      Last Watered: {p?.plant?.lastWatered}
+                      Last Watered: {p?.lastWatered}
                     </p>
+                    <button
+                      onClick={() => handleDeletePlant(p?.plant?._id)}
+                      className="mt-3 w-full bg-[#20b486] text-white py-2 rounded-md hover:bg-[#20b43c] text-sm font-medium"
+                    >
+                      Delete Plant
+                    </button>
                   </div>
                 ))}
               </div>

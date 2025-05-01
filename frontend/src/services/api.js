@@ -55,6 +55,9 @@ export const gardenEndpoints = {
     //add plant to garden
     ADD_PLANT_TO_GARDEN_API: BASE_URL + "/garden/addPlantToGarden",
 
+    //delete plant from garden
+    DELETE_PLANT_FROM_GARDEN_API: BASE_URL + "/garden/deletePlantFromGarden",
+
     //add plant
     ADD_PLANT_API: BASE_URL + "/garden/addPlant",
     //delete plant
