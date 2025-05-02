@@ -37,8 +37,7 @@ GardenGuru solves this by combining **AI**, **automation**, and **community** to
 - Upload plant images to get disease diagnosis and treatment advice.
   
 ### 4. 🌤️ **Weather Integration**
-- Integrated with **WeatherAPI** to suggest plants based on average temperature through the year to decide hariness zone![Screenshot 2025-05-02 100208](https://github.com/user-attachments/assets/76b1fc9a-538c-4141-a017-d66eea4014f8)
-.
+- Integrated with **WeatherAPI** to suggest plants based on average temperature through the year to decide hariness zone
 
 ### 5. 🌍 **Community Hub**
 - Join interest-based groups.
@@ -86,4 +85,4 @@ GardenGuru solves this by combining **AI**, **automation**, and **community** to
 git clone https://github.com/gautamankit31/gardenguru.git
 cd gardenguru
 
-![Screenshot 2025-05-02 100208](https://github.com/user-attachments/assets/cb0edef0-b66a-4e46-8dfb-eda18ba975a4)
+![Screenshot 2025-05-02 100208](https://github.com/user-attachments/assets/76b1fc9a-538c-4141-a017-d66eea4014f8)
