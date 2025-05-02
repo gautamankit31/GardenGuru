@@ -78,11 +78,11 @@ GardenGuru solves this by combining **AI**, **automation**, and **community** to
 
 ---
 
+![Screenshot 2025-05-02 100208](https://github.com/user-attachments/assets/4bd0442a-7e1a-4eea-be26-55c5e70d27e3)
+
 ## ⚙️ Setup Instructions
 
 ### Clone the repo
 ```bash
 git clone https://github.com/gautamankit31/gardenguru.git
-cd gardenguru
-
-![Screenshot 2025-05-02 100208](https://github.com/user-attachments/assets/76b1fc9a-538c-4141-a017-d66eea4014f8)
+cd gardenguru 
